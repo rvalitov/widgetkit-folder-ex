@@ -8,7 +8,7 @@ Git: https://github.com/rvalitov/widgetkit-folder-ex
 */
 ?>
 
-<div class="uk-grid uk-grid-divider uk-form uk-form-horizontal" ng-controller="folderCtrl as folder" data-uk-grid-margin>
+<div class="uk-grid uk-grid-divider uk-form uk-form-horizontal" ng-controller="folderExCtrl as folder" data-uk-grid-margin>
     <div class="uk-width-medium-1-4">
 
         <div class="wk-panel-marginless">
