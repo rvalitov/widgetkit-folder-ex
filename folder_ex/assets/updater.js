@@ -79,6 +79,12 @@ jQuery(document).ready(function($){
 		$(this).empty();
 		$(this).append($.fn.jquery);
 	});
+	$('#version-uikit-'+distr_name).waitUntilExists(function(){
+		if (UIkit && UIkit.version){
+			$(this).empty();
+			$(this).append(UIkit.version);
+		}
+	});
 	$('#version-angularjs-'+distr_name).waitUntilExists(function(){
 		if (angular && angular.version && angular.version.full){
 			$(this).empty();

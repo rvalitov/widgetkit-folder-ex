@@ -138,6 +138,14 @@ Git: https://github.com/rvalitov/widgetkit-folder-ex
 							</tr>
 							<tr>
 								<td>
+									UIkit Version
+								</td>
+								<td id="version-uikit-widgetkit-folder-ex">
+									Unknown
+								</td>
+							</tr>
+							<tr>
+								<td>
 									AngularJS Version
 								</td>
 								<td id="version-angularjs-widgetkit-folder-ex">
