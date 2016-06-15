@@ -7,7 +7,7 @@ jQuery(document).ready(function($){
 	/* Start of widget specific settings */
 	var distr_name='widgetkit-folder-ex';
 	var widget_name='FolderEx';
-	var widget_version='v1.0.0';
+	var widget_version='v1.1.0';
 	/*CAUTION: the month is zero-based*/
 	var widget_date=printNiceDate(new Date(2016,05,13));
 	var widget_logo='https://raw.githubusercontent.com/wiki/rvalitov/widgetkit-folder-ex/images/logo.jpg';
