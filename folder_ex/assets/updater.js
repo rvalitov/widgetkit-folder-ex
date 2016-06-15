@@ -16,7 +16,6 @@ jQuery(document).ready(function($){
 	/* End of widget specific settings */
 	
 	var widget_update_tag='#update-'+distr_name;
-	var modaltext='';
 	
 	(function ($) {
 		/**
@@ -45,10 +44,6 @@ jQuery(document).ready(function($){
 			return $this;
 		};
 	}(jQuery));
-	
-	function showUpdateInfo(){
-		UIkit.modal.alert(modaltext,{"center":true});
-	}
 	
 	/* Filing the about info */
 	$('#name-'+distr_name).waitUntilExists(function(){
@@ -120,8 +115,8 @@ jQuery(document).ready(function($){
 	}
 	function failedToUpdate(){
 		$(widget_update_tag).waitUntilExists(function(){
-			$(this).empty();
-			$(this).append('<div class="uk-panel uk-panel-box uk-alert-danger"><p class="uk-text-center"><i class="uk-icon uk-icon-warning uk-margin-small-right"></i>Failed to retrieve information about available updates.</p></div>');
+			$('div.update-info-'+distr_name).addClass('uk-hidden');
+			$('#update-problem-'+distr_name).removeClass('uk-hidden');
 		});
 	}
 	
@@ -137,27 +132,43 @@ jQuery(document).ready(function($){
 							date_remote=printNiceDate(new Date(date_remote));
 						}
 						else {
-							date_remote='Unknown';
+							date_remote='';
 						}
-							modaltext='<div class="uk-modal-header"><h1>'+widget_name+' plugin update details</h1></div><div class="uk-overflow-container"><div class="uk-width-1-1 uk-text-center"><img class="uk-width-1-2" src="'+widget_logo+'"></div><table class="uk-table"><tr><th></th><th>Local (installed)</th><th>Remote (available)</th></tr><tr><td>Version</td><td>'+widget_version+'</td><td>'+data.tag_name+'</td></tr><tr><td>Build date</td><td>'+widget_date+'</td><td>'+date_remote+'</td></tr></table><hr><h2>Release information:</h2>'+marked(data.body)+'<hr><h2>How to update?</h2><ul><li>You can download the new version <a href="'+data.html_url+'">here<i class="uk-icon uk-icon-external-link uk-margin-small-left"></i></a>.</li><li>Installation instructions are available <a href="'+git_url+distr_name+'">here<i class="uk-icon uk-icon-external-link uk-margin-small-left"></i></a></li></ul></div>';
-							modaltext=modaltext.replace(/(\r|\n)/gm,'');
-							var infotext='<a id="info-'+distr_name+'"><i class="uk-icon-info-circle uk-margin-small-right"></i>New '+widget_name+' '+data.tag_name+' is available! Read more</a>';
-							UIkit.notify(infotext, {'timeout':infotimeout,'pos':'top-center','status':'info'});
-							$('#info-'+distr_name).click(function(){
-								showUpdateInfo();
-							});
-							$(widget_update_tag).waitUntilExists(function(){
-								$(this).empty();
-								$(this).append('<div class="uk-panel uk-panel-box uk-alert-danger"><h2 class="uk-text-center"><i class="uk-icon uk-icon-warning uk-margin-small-right"></i>This plugin is outdated!</h2><h4 class="uk-text-center">A new version is available. Please, update.</h4><button type="button" class="uk-button"><i class="uk-icon uk-icon-info-circle uk-margin-small-right"></i>Update details</button></div>');
-								$(this).find('button').click(function(){
-									showUpdateInfo();
-								});
-							});
+						var infotext='<p class="uk-margin-remove"><i class="uk-icon-info-circle uk-margin-small-right"></i>New version of plugin '+widget_name+' '+data.tag_name+' is available!</p><p class="uk-text-center uk-margin-remove"><a href="'+data.html_url+'" target="_blank" class="uk-button uk-button-mini uk-button-success"><i class="uk-icon-external-link uk-margin-small-right"></i>Upgrade</a></p>';
+						/*We only show update notifications on the Widgetkit page*/
+						if ( (window.location.href.indexOf('com_widgetkit')>0) || (window.location.href.indexOf('page=widgetkit')>0) )
+							UIkit.notify(infotext, {'timeout':infotimeout,'pos':'top-center','status':'warning'});
+						$(widget_update_tag).waitUntilExists(function(){
+							$('div.update-info-'+distr_name).addClass('uk-hidden');
+							$('#update-available-'+distr_name).removeClass('uk-hidden');
+							
+							$('#version-local-'+distr_name).empty();
+							$('#version-local-'+distr_name).append(widget_version);
+							
+							$('#version-remote-'+distr_name).empty();
+							$('#version-remote-'+distr_name).append(data.tag_name);
+							
+							$('#date-local-'+distr_name).empty();
+							$('#date-local-'+distr_name).append(widget_date);
+							
+							$('#date-remote-'+distr_name).empty();
+							if (date_remote.length)
+								$('#date-remote-'+distr_name).append(date_remote);
+							
+							$('#release-info-'+distr_name).empty();
+							$('#release-info-'+distr_name).append(marked(data.body));
+							
+							$('#update-logo-'+distr_name).attr('src',widget_logo);
+							
+							$('#download-'+distr_name).attr('href',data.html_url);
+							
+							$('#instructions-'+distr_name).attr('href',widget_wiki);
+						});
 					}
 					else{
 						$(widget_update_tag).waitUntilExists(function(){
-							$(this).empty();
-							$(this).append('<div class="uk-panel uk-panel-box uk-alert-success"><p class="uk-text-center"><i class="uk-icon uk-icon-check uk-margin-small-right"></i>Your version of the plugin is up to date!</p></div>');
+							$('div.update-info-'+distr_name).addClass('uk-hidden');
+							$('#update-ok-'+distr_name).removeClass('uk-hidden');
 						});
 					}
 				}

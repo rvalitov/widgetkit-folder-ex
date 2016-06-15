@@ -155,6 +155,10 @@ return array(
 			$app['scripts']->add('marked', 'plugins/content/folder_ex/assets/marked.min.js', array('uikit'));
 			//Updater:
 			$app['scripts']->add('folder_ex.updater', 'plugins/content/folder_ex/assets/updater.js');
+			//Mailchimp for subscription:
+			$app['scripts']->add('mailchimp', 'plugins/content/folder_ex/assets/jquery.formchimp.min.js', array('uikit'));
+			//jQuery form validator http://www.formvalidator.net/:
+			$app['scripts']->add('jquery-form-validator', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.20/jquery.form-validator.min.js', array('uikit'));
         }
 
     )

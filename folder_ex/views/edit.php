@@ -6,6 +6,8 @@ E-mail: ramilvalitov@gmail.com
 Web: http://www.valitov.me/
 Git: https://github.com/rvalitov/widgetkit-folder-ex
 */
+
+require_once(__DIR__.'/helper.php');
 ?>
 
 <div class="uk-form uk-form-horizontal" ng-controller="folderExCtrl as folder">
@@ -69,102 +71,9 @@ Git: https://github.com/rvalitov/widgetkit-folder-ex
 
 	<h3 class="wk-form-heading">{{'About' | trans}}</h3>
 
-	<div class="uk-grid">
-		<div class="uk-text-center uk-width-medium-1-3" id="logo-widgetkit-folder-ex">
-		</div>
-		<div class="uk-width-medium-2-3">
-			<table class="uk-table uk-table-striped">
-				<tr>
-					<td>
-						Plugin Name
-					</td>
-					<td id="name-widgetkit-folder-ex">
-						N/A
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Plugin Version
-					</td>
-					<td id="version-widgetkit-folder-ex">
-						N/A
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Plugin Build Date
-					</td>
-					<td id="build-widgetkit-folder-ex">
-						N/A
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Widgetkit Version
-					</td>
-					<td id="version-wk-widgetkit-folder-ex">
-						<?php echo (isset($app['version']))?$app['version']:'Unknown';?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Database Version
-					</td>
-					<td id="version-db-widgetkit-folder-ex">
-						<?php echo (isset($app['db_version']))?$app['db_version']:'Unknown';?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						jQuery Version
-					</td>
-					<td id="version-jquery-widgetkit-folder-ex">
-						Unknown
-					</td>
-				</tr>
-				<tr>
-					<td>
-						UIkit Version
-					</td>
-					<td id="version-uikit-widgetkit-folder-ex">
-						Unknown
-					</td>
-				</tr>
-				<tr>
-					<td>
-						AngularJS Version
-					</td>
-					<td id="version-angularjs-widgetkit-folder-ex">
-						Unknown
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Author<span data-uk-tooltip title="See the complete information about contributors and acknowledgement on the website below."><i class="uk-icon uk-icon-question-circle uk-margin-small-left" style="color:#ffb105"></i></span>
-					</td>
-					<td>
-						<a href="https://valitov.me" target="_blank">Ramil Valitov<i class="uk-icon uk-icon-external-link uk-margin-small-left"></i></a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Website
-					</td>
-					<td id="website-widgetkit-folder-ex">
-						N/A
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Wiki and Manuals
-					</td>
-					<td id="wiki-widgetkit-folder-ex">
-						N/A
-					</td>
-				</tr>
-			</table>
-			<div id="update-widgetkit-folder-ex" class="uk-text-center">
-			</div>
-		</div>
-	<div>
+	<?php printAboutInfo($app);?>
+
+	<h3 class="wk-form-heading">{{'Newsletter' | trans}}</h3>
+	
+	<?php printNewsletterInfo($app);?>
 </div>
