@@ -134,7 +134,7 @@ function printAboutInfo($appWK){
 		$wkinfo='<span  data-uk-tooltip class="uk-text-success" style="margin-top: 5px;" title="{{ \'Your Widgetkit version is OK.\' |trans}}"><i class="uk-icon-check uk-margin-small-right"></i>'.$versionWK.'</span>';
 	
 	if (!isset($info['codename'])){
-		echo <<< 'EOT'
+		echo <<< EOT
 <div class="uk-panel uk-panel-box uk-alert uk-alert-danger"><i class="uk-icon uk-icon-warning uk-margin-small-right"></i>{{ 'Failed to retrieve information' |trans}}</div>;
 EOT;
 		return;
@@ -261,7 +261,7 @@ EOT;
 			</div>
 		</div>
 	</div>
-<div>
+</div>
 
 <div id="update-modal-{$info['codename']}" class="uk-modal">
 	<div class="uk-modal-dialog">
@@ -347,14 +347,18 @@ function printNewsletterInfo($appWK){
 	$origin=htmlspecialchars($appWK['request']->getBaseUrl());
 	
 	if (!isset($info['codename'])){
-		echo <<< 'EOT'
+		echo <<< EOT
 <div class="uk-panel uk-panel-box uk-alert uk-alert-danger"><i class="uk-icon uk-icon-warning uk-margin-small-right"></i>{{ 'Failed to retrieve information' |trans}}</div>;
 EOT;
 		return;
 	}
 	
 	echo <<< EOT
-<div class="uk-panel uk-panel-box uk-alert"><i class="uk-icon uk-icon-info-circle uk-margin-small-right"></i>{{ 'We have different free products that extend functionality of the Widgetkit. Please, subscribe for a newsletter to get notifications about new releases of the current plugin, other widgets that we create, and news when a completely new product for the Widgetkit becomes available.' | trans}}</div>
+<div class="uk-panel uk-panel-box uk-alert">
+	<p>
+		<i class="uk-icon uk-icon-info-circle uk-margin-small-right"></i>{{ 'We have different free products that extend functionality of the Widgetkit. Please, subscribe for a newsletter to get notifications about new releases of the current plugin, other widgets that we create, and news when a completely new product for the Widgetkit becomes available.' | trans}}
+	</p>
+</div>
 
 <button class="uk-button uk-button-success" data-uk-modal="{target:'#{$info['codename']}-subscribe'}"><i class="uk-icon uk-icon-check uk-margin-small-right"></i>{{ 'Subscribe' |trans}}</button>
 
