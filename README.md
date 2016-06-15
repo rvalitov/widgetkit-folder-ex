@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Release-v1.0.0-green.svg?style=flat) ![Widgetkit](https://img.shields.io/badge/Widgetkit-v2.4.x+-green.svg?style=flat) ![Joomla](https://img.shields.io/badge/Joomla!-v3.4.x+-yellow.svg?style=flat) ![Wordpress](https://img.shields.io/badge/Wordpress-v4.4.x+-yellow.svg?style=flat)
+![Version](https://img.shields.io/badge/Release-v1.1.1-green.svg?style=flat) ![Widgetkit](https://img.shields.io/badge/Widgetkit-v2.4.x+-green.svg?style=flat) ![Joomla](https://img.shields.io/badge/Joomla!-v3.4.x+-yellow.svg?style=flat) ![Wordpress](https://img.shields.io/badge/Wordpress-v4.4.x+-yellow.svg?style=flat)
 
 ![FolderEx Widgetkit Content Provider logo](https://raw.githubusercontent.com/wiki/rvalitov/widgetkit-folder-ex/images/logo.jpg)
 
@@ -14,7 +14,7 @@
 	* [Slideset Lightbox Widget](https://github.com/rvalitov/widgetkit-slidesetlightbox)
 
 ## Features
-For detailed information, please refer to the [manual](https://github.com/rvalitov/widgetkit-folder-ex/wiki).
+For detailed information, please refer to the [manual](https://github.com/rvalitov/widgetkit-folder-ex/wiki). Quick comparison between Folder and FolderEx is [here](https://github.com/rvalitov/widgetkit-folder-ex/wiki/Quick-comparison-Folder-VS-FolderEx).
 
 ### Basic Features
 
@@ -27,7 +27,7 @@ For detailed information, please refer to the [manual](https://github.com/rvalit
 ### Unique Features
 The new features that the FolderEx has and that are not available in the original Folder Content Provider:
  
-* **Sophisticated Filtering** - complete freedom to apply any filtering of files using RegExp patterns.
+* **Sophisticated Filtering** - complete freedom to apply any filtering of files using RegExp patterns, [read more](https://github.com/rvalitov/widgetkit-folder-ex/wiki/Filtering-Patterns).
 * **Better control of titles** - more options are available to control how the titles are created from the file names, e.g. replacement of dashes and/or underscores into space character.
 * **Tooltips for all options** - it's much easier to use the widget, because tooltips are available for all settings.
 * **Update notifications** - you will be notified if new versions of the plugin are available.
@@ -47,7 +47,7 @@ The installation procedure is described [here](https://github.com/rvalitov/widge
 The manual is available in the [Wiki area](https://github.com/rvalitov/widgetkit-folder-ex/wiki).
 
 # Authors, Contributors and Acknowledgment
-* This widget is created by [Ramil Valitov](http://www.valitov.me).
+* This plugin is created by [Ramil Valitov](http://www.valitov.me).
 * The code is based on the original Folder Content Provider by [Yootheme](http://yootheme.com/).
 * Icon designed by [iSuite Revoked](http://prax-08.deviantart.com/) is used in logo.
 
