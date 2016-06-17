@@ -7,11 +7,19 @@ Web: http://www.valitov.me/
 Git: https://github.com/rvalitov/widgetkit-folder-ex
 */
 
+require_once(__DIR__.'/views/helper.php');
+
 return array(
 
     'name' => 'content/folder_ex',
 
     'main' => 'YOOtheme\\Widgetkit\\Content\\Type',
+	
+	'plugin_version' => 'v1.1.1',
+	
+	'plugin_date' => '13/06/2016',
+	
+	'plugin_logo' => 'https://raw.githubusercontent.com/wiki/rvalitov/widgetkit-folder-ex/images/logo.jpg',
 
     'config' => array(
 
@@ -146,19 +154,23 @@ return array(
     'events' => array(
 
         'init.admin' => function($event, $app) {
+			//Adding our own translation files
+			$app->extend('translator', function ($translator, $app) {
+				return $translator->addResource('plugins/content/folder_ex/languages/'.$app['locale'].'.json');
+			}); 
             $app['angular']->addTemplate('folder_ex.edit', 'plugins/content/folder_ex/views/edit.php');
-            $app['scripts']->add('widgetkit-folder_ex-controller', 'plugins/content/folder_ex/assets/controller.js');
+            $app['scripts']->add('folder_ex-controller', 'plugins/content/folder_ex/assets/controller.js');
 			//Adding tooltip:
 			$app['scripts']->add('uikit-tooltip', 'vendor/assets/uikit/js/components/tooltip.min.js', array('uikit'));
 			$app['styles']->add('uikit-tooltip', 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.26.3/css/components/tooltip.min.css', array('uikit'));
 			//Marked:
 			$app['scripts']->add('marked', 'plugins/content/folder_ex/assets/marked.min.js', array('uikit'));
-			//Updater:
-			$app['scripts']->add('folder_ex.updater', 'plugins/content/folder_ex/assets/updater.js');
 			//Mailchimp for subscription:
 			$app['scripts']->add('mailchimp', 'plugins/content/folder_ex/assets/jquery.formchimp.min.js', array('uikit'));
 			//jQuery form validator http://www.formvalidator.net/:
 			$app['scripts']->add('jquery-form-validator', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.20/jquery.form-validator.min.js', array('uikit'));
+			//Generating dynamic update script:
+			$app['scripts']->add('folder_ex.dynamic-updater', generateUpdaterJS($app), array(), 'string');
         }
 
     )
