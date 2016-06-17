@@ -14,7 +14,7 @@ require_once(__DIR__.'/helper.php');
     
 	<h3 class="wk-form-heading">{{'Content' | trans}}</h3>
 	<div class="uk-panel uk-panel-box uk-alert">
-		<p><i class="uk-icon uk-icon-info-circle uk-margin-small-right"></i>{{ 'This Content Source allows you to select image files from a specified folder using sorting and filtering options. These files will be used as content items for the widget you selected.' | trans}}</p>
+		<p><i class="uk-icon uk-icon-info-circle uk-margin-small-right"></i>{{ 'This plugin allows to select image files from a specified folder using sorting and filtering options. These files will be used as content items for the widget you selected.' | trans}}</p>
 	</div>
 
 	<div class="uk-form-row">
@@ -45,7 +45,7 @@ require_once(__DIR__.'/helper.php');
 	</div>
 
 	<div class="uk-form-row">
-		<span class="uk-form-label">{{'Title' | trans}}<span  data-uk-tooltip style="margin-top: 5px;" title="{{ 'The title of each file is generated automatically from the file name. The options below control how the file name should be processed.' |trans}}"><i class="uk-icon uk-icon-question-circle uk-margin-small-left" style="color:#ffb105"></i></span></span>
+		<span class="uk-form-label">{{'Title' | trans}}<span  data-uk-tooltip style="margin-top: 5px;" title="{{ 'The title of each image is generated automatically from its file name. The options below control how the file name should be processed.' |trans}}"><i class="uk-icon uk-icon-question-circle uk-margin-small-left" style="color:#ffb105"></i></span></span>
 		<div class="uk-form-controls uk-form-controls-text">
 			<p class="uk-form-controls-condensed">
 				<label><input type="checkbox" ng-model="content.data['strip_leading_numbers']"> {{'Remove leading numbers from title' | trans}}</label>

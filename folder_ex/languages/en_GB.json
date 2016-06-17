@@ -58,12 +58,13 @@
 	"Latest Last": "Latest Last",
 	"Random": "Random",
 	"Title": "Title",
-	"The title of each file is generated automatically from the file name. The options below control how the file name should be processed.": "The title of each file is generated automatically from the file name. The options below control how the file name should be processed.",
+	"The title of each image is generated automatically from its file name. The options below control how the file name should be processed.": "The title of each image is generated automatically from its file name. The options below control how the file name should be processed.",
 	"Remove leading numbers from title": "Remove leading numbers from title",
 	"Remove trailing numbers from title": "Remove trailing numbers from title",
 	"Convert underscores into space": "Convert underscores into space",
 	"Convert dashes into space": "Convert dashes into space",
-	"Max images": "Max images",
+	"Max Images": "Max Images",
 	"This option allows to limit the number of images to load. If this option is empty, then no restriction to the number of images is applied.": "This option allows to limit the number of images to load. If this option is empty, then no restriction to the number of images is applied.",
-	"This Content Source allows you to select image files from a specified folder using sorting and filtering options. These files will be used as content items for the widget you selected.": "This Content Source allows you to select image files from a specified folder using sorting and filtering options. These files will be used as content items for the widget you selected."
+	"Leave empty to load all images": "Leave empty to load all images",
+	"This plugin allows to select image files from a specified folder using sorting and filtering options. These files will be used as content items for the widget you selected.": "This plugin allows to select image files from a specified folder using sorting and filtering options. These files will be used as content items for the widget you selected."
 }
