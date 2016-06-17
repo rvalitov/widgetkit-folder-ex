@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Release-v1.1.1-green.svg?style=flat) ![Widgetkit](https://img.shields.io/badge/Widgetkit-v2.4.x+-green.svg?style=flat) ![Joomla](https://img.shields.io/badge/Joomla!-v3.4.x+-yellow.svg?style=flat) ![Wordpress](https://img.shields.io/badge/Wordpress-v4.4.x+-yellow.svg?style=flat)
+![Version](https://img.shields.io/badge/Release-v1.2.0-green.svg?style=flat) ![Widgetkit](https://img.shields.io/badge/Widgetkit-v2.4.x+-green.svg?style=flat) ![Joomla](https://img.shields.io/badge/Joomla!-v3.4.x+-yellow.svg?style=flat) ![Wordpress](https://img.shields.io/badge/Wordpress-v4.4.x+-yellow.svg?style=flat)
 
 ![FolderEx Widgetkit Content Provider logo](https://raw.githubusercontent.com/wiki/rvalitov/widgetkit-folder-ex/images/logo.jpg)
 
@@ -31,6 +31,9 @@ The new features that the FolderEx has and that are not available in the origina
 * **Better control of titles** - more options are available to control how the titles are created from the file names, e.g. replacement of dashes and/or underscores into space character.
 * **Tooltips for all options** - it's much easier to use the widget, because tooltips are available for all settings.
 * **Update notifications** - you will be notified if new versions of the plugin are available.
+* **Multilingual support**, translated into languages:
+	* English (en_GB)
+	* Русский (ru_RU)
 
 # Supported platforms
 * The latest code is based on Widgetkit 2.7.3, however it should work with any Widgetkit 2.4.x and later (recommended 2.5.0+).
