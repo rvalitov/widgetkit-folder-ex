@@ -65,5 +65,5 @@
 	"Convert dashes into space": "Convert dashes into space",
 	"Max images": "Max images",
 	"This option allows to limit the number of images to load. If this option is empty, then no restriction to the number of images is applied.": "This option allows to limit the number of images to load. If this option is empty, then no restriction to the number of images is applied.",
-	"This Content Source allows you to select image files from a specified folder using sorting and filtering options. These files will be used as content items for the widget you selected.": "This Content Source allows you to select image files from a specified folder using sorting and filtering options. These files will be used as content items for the widget you selected.",
+	"This Content Source allows you to select image files from a specified folder using sorting and filtering options. These files will be used as content items for the widget you selected.": "This Content Source allows you to select image files from a specified folder using sorting and filtering options. These files will be used as content items for the widget you selected."
 }
