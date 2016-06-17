@@ -376,6 +376,18 @@ EOT;
 
 //Generates and returns Javascript code (without <script> tags) used for checking updates
 //$appWK - is parameter that must be set to $app upon call.
+//$settings - array that contains info about the installed plugin. Meaning of the keys:
+//git - URL to the Git repository
+//api - URL to the Git Api
+//infotimeout - timeout of visibilty of the update notification alert
+//name - name of the plugin
+//version - version of the plugin
+//distr_name - distr name (codename)
+//date - build date of the plugin
+//logo - absolute URL to logo of the plugin
+//wiki - absolute URL to wiki of the plugin
+//website - absolute URL to website of the plugin
+//If some fields are missing, then this function tries to detect them
 function generateUpdaterJS($appWK,$settings=array()){
 	if (!is_array($settings))
 		$settings=array();
@@ -609,6 +621,13 @@ EOT;
 	return $js;
 }
 
+//Generates code of modal dialog that shows information about available update of the plugin
+//$appWK - is parameter that must be set to $app upon call.
+//$name - name of the plugin
+//$version - version of the installed plugin
+//$date - build date of the installed plugin
+//$wiki - absolute URL to wiki of the installed plugin
+//$logo - absolute URL to logo of the installed plugin
 function generateUpdateInfoDialog($appWK,$name,$version,$date,$wiki,$logo){
 	$js = <<< EOT
 <div class="uk-modal-header">
