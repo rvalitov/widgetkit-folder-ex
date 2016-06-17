@@ -23,8 +23,8 @@
 	"Update details": "Update details",
 	"Your version of the plugin is up to date!": "Your version of the plugin is up to date!",
 	"Failed to retrieve information about available updates.": "Failed to retrieve information about available updates.",
-	"Local (installed)": "Local (installed)",
-	"Remote (available)": "Remote (available)",
+	"Installed": "Installed",
+	"Available": "Available",
 	"Version": "Version",
 	"Build date": "Build date",
 	"Release information": "Release information",
@@ -40,5 +40,6 @@
 	"Last name": "Last name",
 	"E-mail": "E-mail",
 	"Close": "Close",
-	"New release of plugin %name% is available!": "New release of plugin %name% is available!"
+	"New release of plugin %name% is available!": "New release of plugin %name% is available!",
+	"%name% plugin update details": "%name% plugin update details"
 }

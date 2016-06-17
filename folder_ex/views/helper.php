@@ -564,7 +564,7 @@ jQuery(document).ready(function(\$){
 						else {
 							date_remote='';
 						}
-						var infotext='<p class="uk-margin-remove"><i class="uk-icon-info-circle uk-margin-small-right"></i>{$appWK['translator']->trans('New release of plugin '.$settings['name'].' is available!')} {$appWK['translator']->trans('Version')} '+data.tag_name+'.</p><p class="uk-text-center uk-margin-remove"><button class="uk-button uk-button-mini uk-button-success" id="info-{$settings['distr_name']}">{$appWK['translator']->trans('Update details')}</button></p>';
+						var infotext='<p class="uk-margin-remove"><i class="uk-icon-info-circle uk-margin-small-right"></i>{$appWK['translator']->trans('New release of plugin %name% is available!',array('%name%' => $settings['name']))} {$appWK['translator']->trans('Version')} '+data.tag_name+'.</p><p class="uk-text-center uk-margin-remove"><button class="uk-button uk-button-mini uk-button-success" id="info-{$settings['distr_name']}">{$appWK['translator']->trans('Update details')}</button></p>';
 						
 						UIkit.notify(infotext, {'timeout':{$settings['infotimeout']},'pos':'top-center','status':'warning'});
 						\$('#info-{$settings['distr_name']}').click(function(){
@@ -631,7 +631,7 @@ EOT;
 function generateUpdateInfoDialog($appWK,$name,$version,$date,$wiki,$logo){
 	$js = <<< EOT
 <div class="uk-modal-header">
-	<h1>{$name} plugin update details</h1>
+	<h1>{$appWK['translator']->trans('%name% plugin update details',array('%name%' => $name))}</h1>
 </div>
 <div class="uk-overflow-container">
 	<div class="uk-grid">
@@ -645,10 +645,10 @@ function generateUpdateInfoDialog($appWK,$name,$version,$date,$wiki,$logo){
 						&nbsp;
 					</th>
 					<th>
-						{$appWK['translator']->trans('Local (installed)')}
+						{$appWK['translator']->trans('Installed')}
 					</th>
 					<th>
-						{$appWK['translator']->trans('Remote (available)')}
+						{$appWK['translator']->trans('Available')}
 					</th>
 				</tr>
 				<tr>
