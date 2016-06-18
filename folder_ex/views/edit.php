@@ -7,7 +7,8 @@ Web: http://www.valitov.me/
 Git: https://github.com/rvalitov/widgetkit-folder-ex
 */
 
-require_once(__DIR__.'/helper.php');
+use WidgetkitEx\FolderEx\WidgetkitExPlugin;
+$plugin=new WidgetkitExPlugin();
 ?>
 
 <div class="uk-form uk-form-horizontal" ng-controller="folderExCtrl as folder">
@@ -71,9 +72,9 @@ require_once(__DIR__.'/helper.php');
 
 	<h3 class="wk-form-heading">{{'About' | trans}}</h3>
 
-	<?php printAboutInfo($app);?>
+	<?php $plugin->printAboutInfo($app);?>
 
 	<h3 class="wk-form-heading">{{'Newsletter' | trans}}</h3>
 	
-	<?php printNewsletterInfo($app);?>
+	<?php $plugin->printNewsletterInfo($app);?>
 </div>

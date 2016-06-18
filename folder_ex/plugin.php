@@ -7,7 +7,8 @@ Web: http://www.valitov.me/
 Git: https://github.com/rvalitov/widgetkit-folder-ex
 */
 
-require_once(__DIR__.'/views/helper.php');
+require_once(__DIR__.'/views/WidgetkitExPlugin.php');
+use WidgetkitEx\FolderEx\WidgetkitExPlugin;
 
 return array(
 
@@ -170,7 +171,8 @@ return array(
 			//jQuery form validator http://www.formvalidator.net/:
 			$app['scripts']->add('jquery-form-validator', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.20/jquery.form-validator.min.js', array('uikit'));
 			//Generating dynamic update script:
-			$app['scripts']->add('folder_ex.dynamic-updater', generateUpdaterJS($app), array(), 'string');
+			$plugin=new WidgetkitExPlugin();
+			$app['scripts']->add('folder_ex.dynamic-updater', $plugin->generateUpdaterJS($app), array(), 'string');
         }
 
     )
