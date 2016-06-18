@@ -298,6 +298,7 @@ function printNewsletterInfo($appWK){
 	$email=htmlspecialchars($appWK['user']->getEmail());
 	$cms=htmlspecialchars((IsJoomlaInstalled())?'Joomla':'WordPress');
 	$origin=htmlspecialchars($appWK['request']->getBaseUrl());
+	$locale=htmlspecialchars($appWK['locale']);
 	
 	if (!isset($info['codename'])){
 		echo <<< EOT
@@ -348,6 +349,13 @@ EOT;
 						<input type="text" name="CMS" value="{$cms}">
 						<input type="text" name="ORIGIN" value="{$origin}">
 						<input type="text" name="PRODUCT" value="{$info['name']}">
+						<input type="text" name="LOCALE" value="{$locale}">
+						<input type="text" id="country_code-{$info['codename']}" name="COUNTRYID" value="">
+						<input type="text" id="country_name-{$info['codename']}" name="COUNTRY" value="">
+						<input type="text" id="region_code-{$info['codename']}" name="REGIONID" value="">
+						<input type="text" id="region_name-{$info['codename']}" name="REGION" value="">
+						<input type="text" id="city-{$info['codename']}" name="CITY" value="">
+						<input type="text" id="time_zone-{$info['codename']}" name="TIMEZONE" value="">
 					</div>
 				</fieldset>
 				<div class="uk-text-right uk-margin">
@@ -369,6 +377,31 @@ EOT;
 		scrollToTopOnError : false
 	});
 	jQuery('#form-{$info['codename']}-subscribe').formchimp();
+	
+	/*Geolocation if nessesary*/
+	jQuery('#{$info['codename']}-subscribe').on({
+		'show.uk.modal': function(){
+			if (!jQuery("#country_code-{$info['codename']}").val()){
+				jQuery.ajax({
+						'url': 'http://ip-api.com/json',
+						'type' : "GET",
+						'dataType' : 'json',
+						success: function (data, textStatus, jqXHR){
+							if (data){
+								console.log(data);
+								console.log(data.countryCode);
+								jQuery("#country_code-{$info['codename']}").val(data.countryCode);
+								jQuery("#country_name-{$info['codename']}").val(data.country);
+								jQuery("#region_code-{$info['codename']}").val(data.region);
+								jQuery("#region_name-{$info['codename']}").val(data.regionName);
+								jQuery("#city-{$info['codename']}").val(data.city);
+								jQuery("#time_zone-{$info['codename']}").val(data.timezone);
+							}
+						}
+				});
+			}
+		}
+	});
 </script>
 
 EOT;
@@ -700,4 +733,5 @@ function generateUpdateInfoDialog($appWK,$name,$version,$date,$wiki,$logo){
 EOT;
 	return str_replace(array("\r","\n"),"",$js);
 }
+
 ?>
