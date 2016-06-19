@@ -54,6 +54,9 @@ The manual is available in the [Wiki area](https://github.com/rvalitov/widgetkit
 * The code is based on the original Folder Content Provider by [Yootheme](http://yootheme.com/).
 * Icon designed by [iSuite Revoked](http://prax-08.deviantart.com/) is used in logo.
 
+## Disclaimer
+This project is NOT affiliated with, endorsed, or sponsored by the Yootheme. Widgetkit, its name, trademark, and other aspects of the app are trademarked and owned by their respective owners.
+
 ## Subscribe for updates
 If you want to stay tuned about new releases of this plugin or other free plugins that extend the functionality of the Widgetkit, please, [click here](http://eepurl.com/b50dBr) to subscribe to the newsletter. You will be able to unsubscribe anytime in the future using a link provided in every e-mail we send.
 
