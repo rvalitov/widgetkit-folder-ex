@@ -64,7 +64,7 @@ return array(
             || $now - $content['hashed'] > $expires // cached values too old
             || $hash($content) != $content['hash']) { // content settings have changed
 
-            $folder = trim($content['folder'], '/');
+            $folder = trim($content['folder'], DIRECTORY_SEPARATOR);
 			$r=trim($content['regexp']);
 			if ($r)
 				$pttrn=$r;
@@ -73,7 +73,7 @@ return array(
             $dir    = dirname(dirname(dirname( $app['path'] ))); // TODO: cleaner? system agnostic?
             $sort   = explode('_', $content['sort_by'] ?: 'filename_asc');
 
-            if (!$files = glob($dir.'/'.$folder.'/*')) {
+            if (!$files = glob($dir.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.'*')) {
                 return;
             }
 
@@ -96,8 +96,8 @@ return array(
 
                 $data = array();
 
-                $data['title'] = basename($img);
-                $data['media'] = $folder.'/'.basename($img);
+                $data['title'] = WidgetkitExPlugin::mb_basename($img);
+                $data['media'] = implode(DIRECTORY_SEPARATOR, array_map("rawurlencode", explode(DIRECTORY_SEPARATOR, $folder.DIRECTORY_SEPARATOR.WidgetkitExPlugin::mb_basename($img))));
 
                 // remove extension
                 $data['title'] = preg_replace('/\.[^.]+$/', '', $data['title']);
