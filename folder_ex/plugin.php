@@ -163,7 +163,7 @@ return array(
 			$app['scripts']->add('uikit-tooltip', 'vendor/assets/uikit/js/components/tooltip.min.js', array('uikit'));
 			$app['styles']->add('uikit-tooltip', 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.26.3/css/components/tooltip.min.css', array('uikit'));
 			//jQuery wait plugin:
-			$app['scripts']->add('jquery.wait', 'plugins/widgets/folder_ex/assets/jquery.wait.min.js', array('uikit'));
+			$app['scripts']->add('jquery.wait', 'plugins/content/folder_ex/assets/jquery.wait.min.js', array('uikit'));
 			//Marked:
 			$app['scripts']->add('marked', 'plugins/content/folder_ex/assets/marked.min.js', array('uikit'));
 			//Mailchimp for subscription:
