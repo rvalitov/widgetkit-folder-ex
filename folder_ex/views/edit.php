@@ -8,7 +8,7 @@ Git: https://github.com/rvalitov/widgetkit-folder-ex
 */
 
 use WidgetkitEx\FolderEx\WidgetkitExPlugin;
-$plugin=new WidgetkitExPlugin();
+$plugin=new WidgetkitExPlugin($app);
 ?>
 
 <div class="uk-form uk-form-horizontal" ng-controller="folderExCtrl as folder">

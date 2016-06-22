@@ -1,6 +1,12 @@
 <?php
 /*
-Helper functions for Widgetkit 2 plugins.
+This is a helper class that is suitable for use with any type of plugin for Widgetkit 2:
+1) Widgets
+2) Content provider plugins
+
+In order to use this class in your plugin you need to rename the namespace of this class according to the name of your plugin, for example, for MapEx widget this class should be declared in namespace "WidgetkitEx\MapEx".
+If you need extra unique functions that are plugin-specific, then you should declare your own class that extends this class, see usage example for the WidgetkitExMapPlugin in the MapEx widget.
+
 Author: Ramil Valitov
 E-mail: ramilvalitov@gmail.com
 Web: http://www.valitov.me/
@@ -11,9 +17,71 @@ namespace WidgetkitEx\FolderEx{
 class WidgetkitExPlugin{
 	
 	private $plugin_info;
+	
+	private $isWidget=false;
+	private $isContentProvider=false;
+	
+	//Below are the versions of PHP and Widgetkit that are OK
+	const minPHPVersion='5.3';
+	const stablePHPVersion='5.6';
+	const minWKVersion='2.5.0';
+	const stableWKVersion='2.6.0';
 
-	public function __construct(){
-		$this->plugin_info=$this->getWKPluginInfo();
+	//Unique id of the plugin, usually this id is used as HTML id
+	private $id;
+	
+	//The 3 arrays below contain strings that will be used for console log (JS) output, see usage example in the MapEx widget.
+	private $debug_info = array();
+	private $debug_warning = array();
+	private $debug_error = array();
+	
+	//true, if current CMS is Joomla
+	private $isJoomla;
+	
+	//Version of CMS
+	private $CMS;
+	
+	public function __construct($appWK,$id=0){
+		$this->plugin_info=$this->getWKPluginInfo($appWK);
+		
+		$this->id=$id;
+		
+		$this->isJoomla=WidgetkitExPlugin::IsJoomlaInstalled();
+		if ($this->isJoomla)
+			$this->CMS=WidgetkitExPlugin::getJoomlaVersion();
+		else
+			$this->CMS=WidgetkitExPlugin::getWPVersion();
+		
+		$wk_version=WidgetkitExPlugin::getWKVersion();
+		$php_version=@phpversion();
+		array_push($this->debug_info,'Processing widget '.$this->plugin_info['name'].' (version '.$this->plugin_info['version'].') on '.$CMS.' with Widgetkit '.$wk_version.' and PHP '.$php_version.'('.@php_sapi_name().')');
+		if (version_compare($this->minPHPVersion,$php_version)>0)
+			array_push($this->debug_error,'Your PHP is too old! Upgrade is strongly required! This widget may not work with your version of PHP.');
+		else
+			if (version_compare($this->stablePHPVersion,$php_version)>0)
+				array_push($this->debug_warning,'Your PHP is quite old. Although this widget can work with your version of PHP, upgrade is recommended to the latest stable version of PHP.');
+			
+		if (version_compare($this->minWKVersion,$wk_version)>0)
+			array_push($this->debug_warning,"Your Widgetkit version is quite old. Although this widget may work with your version of Widgetkit, upgrade is recommended to the latest stable version of Widgetkit. Besides, you may experience some issues of missing options in the settings of this widget if you don't upgrade.");
+
+		array_push($this->debug_info,'Host: '.@php_uname());
+		$ipath=$this->plugin_info['path'];
+		array_push($this->debug_info,'Widget installation path: '.$ipath);
+		if ($this->isJoomla)
+			if (preg_match_all('@.*\/administrator\/components\/com_widgetkit\/plugins\/widgets\/.+@',$ipath))
+				array_push($this->debug_info,'Installation path is correct');
+			else
+				array_push($this->debug_error,'Installation path is not correct, please fix it. Read more in the Wiki.');
+		else
+			if (preg_match_all('@.*\/wp-content\/plugins\/widgetkit\/plugins\/widgets\/.+@',$ipath))
+				array_push($this->debug_info,'Installation path is correct');
+			else
+				array_push($this->debug_warning,'Installation path is not correct, please fix it. Read more in the Wiki.');
+
+		if ($this->isJoomla)
+			array_push($this->debug_info,'Detected CMS: Joomla');
+		else
+			array_push($this->debug_info,'Detected CMS: WordPress');
 	}
 
 	//If $firstName=true, then returns first name of the current user or empty string if the first name is unkown
@@ -38,6 +106,16 @@ class WidgetkitExPlugin{
 		return ((sizeof($split_name)>0)?implode(' ',$split_name):'');
 	}
 
+	//true if Joomla is installed
+	public function isCMSJoomla(){
+		return $this->isJoomla;
+	}
+	
+	//Returns CMS version
+	public function getCMSVersion(){
+		return $this->CMS;
+	}
+	
 	//Returns true, if the current CMS is Joomla
 	public static function IsJoomlaInstalled(){
 		return ( (class_exists('JURI')) && (method_exists('JURI','base')) );
@@ -94,7 +172,27 @@ class WidgetkitExPlugin{
 			$result[$key]=htmlspecialchars($value);
 		return $result;
 	}
+	
+	public function isWidget(){
+		return $this->isWidget;
+	}
+	
+	public function isContentProvider(){
+		return $this->isContentProvider;
+	}
+	
+	public function isJoomla(){
+		return $this->isJoomla;
+	}
 
+	public function getPluginDirectory(){
+		return $this->plugin_info['path'];
+	}
+	
+	public function getPluginURL(){
+		return $this->plugin_info['url'];
+	}
+	
 	//Returns array with info about current plugin (no matter if it's a widget or a content provider). It works only for custom plugins that are created with updater.js file.
 	//The array contains following fields:
 	//name - the name of the plugin or empty string if unknown.
@@ -104,7 +202,7 @@ class WidgetkitExPlugin{
 	//logo - the absolute URL of the logo of the plugin or empty string if unknown.
 	//wiki - the absolute URL of wiki (manual) for the plugin or empty string if unknown.
 	//website - the absolute URL of website for the plugin or empty string if unknown.
-	private function getWKPluginInfo(){
+	private function getWKPluginInfo($appWK){
 		$info=[
 			'name'=>'',
 			'version'=>'',
@@ -113,33 +211,62 @@ class WidgetkitExPlugin{
 			'date'=>'',
 			'logo'=>'',
 			'wiki'=>'',
-			'website'=>''
+			'website'=>'',
+			'path'=>'',
+			'relativepath'=>'',
+			'url'=>''
 		];
 		
-		$f=@file_get_contents(__DIR__ .'/../plugin.php',false,null,0,2400);
-		if ( ($f) && (preg_match_all("@^\s*'config'\s*=>\s*array\s*\(.*$@m",$f,$matches,PREG_OFFSET_CAPTURE)) ){
-			$offset=$matches[0][0][1];
-			if (preg_match_all("@^\s*'label'\s*=>\s*'.*$@m",$f,$matches,PREG_PATTERN_ORDER,$offset)){
-				$info['name']=explode("'",trim($matches[0][0]))[3];
+		//We perform a sequental scan of parent directories of the current script to find the plugin install directory
+		$needle=DIRECTORY_SEPARATOR."com_widgetkit".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."widgets".DIRECTORY_SEPARATOR;
+		$pos=strrpos(__DIR__,$needle);
+		$this->isWidget=(boolean)$pos;
+		if (!$pos){
+			$this->isWidget=false;
+			$needle=DIRECTORY_SEPARATOR."com_widgetkit".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."content".DIRECTORY_SEPARATOR;
+			$pos=strrpos(__DIR__,$needle);
+			$this->isContentProvider=(boolean)$pos;
+		}
+		if ($pos){
+			$offset=$pos+strlen($needle);
+			$pos2=strpos(__DIR__,DIRECTORY_SEPARATOR,$offset);
+			if (!$pos2)
+				$info['path']=__DIR__;
+			else
+				$info['path']=substr(__DIR__,0,$pos2);
+			$needle=DIRECTORY_SEPARATOR."com_widgetkit".DIRECTORY_SEPARATOR;
+			$info['relativepath']=substr(__DIR__,$pos+strlen($needle),$pos2-($pos+strlen($needle)));
+		}
+		
+		if ($info['path']){
+			$f=@file_get_contents($info['path'].DIRECTORY_SEPARATOR.'plugin.php',false,null,0,2400);
+			if ( ($f) && (preg_match_all("@^\s*'config'\s*=>\s*array\s*\(.*$@m",$f,$matches,PREG_OFFSET_CAPTURE)) ){
+				$offset=$matches[0][0][1];
+				if (preg_match_all("@^\s*'label'\s*=>\s*'.*$@m",$f,$matches,PREG_PATTERN_ORDER,$offset)){
+					$info['name']=explode("'",trim($matches[0][0]))[3];
+				}
+				if (preg_match_all("@^\s*'name'\s*=>\s*'.*$@m",$f,$matches,PREG_PATTERN_ORDER,$offset)){
+					$info['codename']=explode("'",trim($matches[0][0]))[3];
+				}
+				if (preg_match_all("@^\s*'plugin_version'\s*=>\s*'.*$@m",$f,$matches)){
+					$info['version']=explode("'",trim($matches[0][0]))[3];
+				}
+				if (preg_match_all("@^\s*'plugin_date'\s*=>\s*'.*$@m",$f,$matches)){
+					$info['date']=explode("'",trim($matches[0][0]))[3];
+				}
+				if (preg_match_all("@^\s*'plugin_logo'\s*=>\s*'.*$@m",$f,$matches)){
+					$info['logo']=explode("'",trim($matches[0][0]))[3];
+				}
+				if (preg_match_all("@^\s*'plugin_wiki'\s*=>\s*'.*$@m",$f,$matches)){
+					$info['wiki']=explode("'",trim($matches[0][0]))[3];
+				}
+				if (preg_match_all("@^\s*'plugin_website'\s*=>\s*'.*$@m",$f,$matches)){
+					$info['website']=explode("'",trim($matches[0][0]))[3];
+				}
 			}
-			if (preg_match_all("@^\s*'name'\s*=>\s*'.*$@m",$f,$matches,PREG_PATTERN_ORDER,$offset)){
-				$info['codename']=explode("'",trim($matches[0][0]))[3];
-			}
-			if (preg_match_all("@^\s*'plugin_version'\s*=>\s*'.*$@m",$f,$matches)){
-				$info['version']=explode("'",trim($matches[0][0]))[3];
-			}
-			if (preg_match_all("@^\s*'plugin_date'\s*=>\s*'.*$@m",$f,$matches)){
-				$info['date']=explode("'",trim($matches[0][0]))[3];
-			}
-			if (preg_match_all("@^\s*'plugin_logo'\s*=>\s*'.*$@m",$f,$matches)){
-				$info['logo']=explode("'",trim($matches[0][0]))[3];
-			}
-			if (preg_match_all("@^\s*'plugin_wiki'\s*=>\s*'.*$@m",$f,$matches)){
-				$info['wiki']=explode("'",trim($matches[0][0]))[3];
-			}
-			if (preg_match_all("@^\s*'plugin_website'\s*=>\s*'.*$@m",$f,$matches)){
-				$info['website']=explode("'",trim($matches[0][0]))[3];
-			}
+			$url=$appWK['url']->to('widgetkit');
+			if ($url)
+				$info['url']=$url.'/'.$info['relativepath'];
 		}
 		return $info;
 	}
@@ -151,18 +278,18 @@ class WidgetkitExPlugin{
 		$versionDB=htmlspecialchars((isset($appWK['db_version']))?$appWK['db_version']:'Unknown');
 		$php_version=htmlspecialchars(@phpversion());
 		$phpinfo;
-		if (version_compare('5.3',$php_version)>0)
+		if (version_compare($this->minPHPVersion,$php_version)>0)
 			$phpinfo='<span  data-uk-tooltip class="uk-text-danger" style="margin-top: 5px;" title="{{ \'Your PHP is too old! Upgrade is strongly recommended! This plugin may not work with your version of PHP.\' |trans}}"><i class="uk-icon-warning  uk-margin-small-right"></i>'.$php_version.'</span>';
 		else
-		if (version_compare('5.6',$php_version)>0)
+		if (version_compare($this->stablePHPVersion,$php_version)>0)
 			$phpinfo='<span  data-uk-tooltip class="uk-text-warning" style="margin-top: 5px;" title="{{ \'Your PHP is quite old. Although this plugin can work with your version of PHP, upgrade is recommended to the latest stable version of PHP.\' |trans}}"><i class="uk-icon-warning  uk-margin-small-right"></i>'.$php_version.'</span>';
 		else
 			$phpinfo='<span  data-uk-tooltip class="uk-text-success" style="margin-top: 5px;" title="{{ \'Your PHP version is OK.\' |trans}}"><i class="uk-icon-check uk-margin-small-right"></i>'.$php_version.' ('.@php_sapi_name().')</span>';
 
 		$wkinfo;
-		if (version_compare('2.5.0',$versionWK)>0)
+		if (version_compare($this->minWKVersion,$versionWK)>0)
 			$wkinfo='<span  data-uk-tooltip class="uk-text-danger" style="margin-top: 5px;" title="{{ \'Your Widgetkit version is too old. Upgrade is strongly recommended. Although this plugin may work with your version of Widgetkit, upgrade is recommended to the latest stable version of Widgetkit.\' |trans}}"><i class="uk-icon-warning uk-margin-small-right"></i>'.$versionWK.'</span>';
-		if (version_compare('2.6.0',$versionWK)>0)
+		if (version_compare($this->stableWKVersion,$versionWK)>0)
 			$wkinfo='<span  data-uk-tooltip class="uk-text-warning" style="margin-top: 5px;" title="{{ \'Your Widgetkit version is quite old. Although this plugin may work with your version of Widgetkit, upgrade is recommended to the latest stable version of Widgetkit.\' |trans}}"><i class="uk-icon-warning uk-margin-small-right"></i>'.$versionWK.'</span>';
 		else
 			$wkinfo='<span  data-uk-tooltip class="uk-text-success" style="margin-top: 5px;" title="{{ \'Your Widgetkit version is OK.\' |trans}}"><i class="uk-icon-check uk-margin-small-right"></i>'.$versionWK.'</span>';
@@ -475,35 +602,10 @@ EOT;
 		
 		//For JS we must espace single quote character:
 		$modal=addcslashes($this->generateUpdateInfoDialog($appWK),"'");
+		
+		$configfile=$this->getPluginURL().'/config.json';
 		$js = <<< EOT
 jQuery(document).ready(function(\$){
-	(function (\$) {
-		/**
-		* @function
-		* @property {object} jQuery plugin which runs handler function once specified element is inserted into the DOM
-		* @param {function} handler A function to execute at the time when the element is inserted
-		* @param {bool} shouldRunHandlerOnce Optional: if true, handler is unbound after its first invocation
-		* @example \$(selector).waitUntilExists(function);
-		*/
-
-		\$.fn.waitUntilExists    = function (handler, shouldRunHandlerOnce, isChild) {
-			var found       = 'found';
-			var \$this       = \$(this.selector);
-			var \$elements   = \$this.not(function () { return \$(this).data(found); }).each(handler).data(found, true);
-
-			if (!isChild)
-			{
-				(window.waitUntilExists_Intervals = window.waitUntilExists_Intervals || {})[this.selector] =
-					window.setInterval(function () { \$this.waitUntilExists(handler, shouldRunHandlerOnce, true); }, 500);
-			}
-			else if (shouldRunHandlerOnce && \$elements.length)
-			{
-				window.clearInterval(window.waitUntilExists_Intervals[this.selector]);
-			}
-
-			return \$this;
-		};
-	}(jQuery));
 	
 	/* Display modal dialog with update info */
 	function showUpdateInfo(urlDownload,buildDate,buildVersion,releaseInfo){
@@ -548,6 +650,24 @@ jQuery(document).ready(function(\$){
 			\$('#version-angularjs-{$this->plugin_info['codename']}').empty();
 			\$('#version-angularjs-{$this->plugin_info['codename']}').append(angular.version.full);
 		}
+		
+		var configfile="{$configfile}";
+		\$.ajax({
+			'url': configfile,
+			'type' : "GET",
+			'dataType' : 'json',
+			success: function (data, textStatus, jqXHR){
+				if (data){
+					/*Update all elements*/
+					\$.each(data, function (index, value){
+						var e=\$('[ng-model="widget.data.global[\''+index+'\']"]');
+						console.info("Updated global settings for option "+index+" ("+e.length+" items)");
+						e.val(value);
+						e.trigger( "change" );
+					});
+				}
+			}
+		});
 	});
 	
 	function isNewVersionAvailable(vCurrent,vRemote){
@@ -738,6 +858,155 @@ EOT;
 		return str_replace(array("\r","\n"),"",$js);
 	}
 
+	//Returns a string that contains dumb of the $var.
+	//This function is better than print_r because it controls the depth ($max_count), and doesn't cause reaching the memory limit error.
+	public static function features_var_export($var, $prefix = '', $init = TRUE, $count = 0, $max_count=5) {
+		if ($count > $max_count) {
+			// Recursion depth reached.
+			return '...';
+		}
+
+		if (is_object($var)) {
+			$output = method_exists($var, 'export') ? $var->export() : WidgetkitExPlugin::features_var_export((array) $var, '', FALSE, $count+1);
+		}
+		else if (is_array($var)) {
+			if (empty($var)) {
+				$output = 'array()';
+			}
+			else {
+			$output = "array(\n";
+			foreach ($var as $key => $value) {
+				// Using normal var_export on the key to ensure correct quoting.
+				$output .= "  " . var_export($key, TRUE) . " => " . WidgetkitExPlugin::features_var_export($value, '  ', FALSE, $count+1) . ",\n";
+			}
+			$output .= ')';
+			}
+		}
+		else if (is_bool($var)) {
+			$output = $var ? 'TRUE' : 'FALSE';
+		}
+		else if (is_int($var)) {
+			$output = intval($var);
+		}
+		else if (is_numeric($var)) {
+			$floatval = floatval($var);
+			if (is_string($var) && ((string) $floatval !== $var)) {
+			  // Do not convert a string to a number if the string
+			  // representation of that number is not identical to the
+			  // original value.
+			  $output = var_export($var, TRUE);
+			}
+			else {
+			$output = $floatval;
+			}
+		}
+		else if (is_string($var) && strpos($var, "\n") !== FALSE) {
+			// Replace line breaks in strings with a token for replacement
+			// at the very end. This protects whitespace in strings from
+			// unintentional indentation.
+			$var = str_replace("\n", "***BREAK***", $var);
+			$output = var_export($var, TRUE);
+		}
+		else {
+			$output = var_export($var, TRUE);
+		}
+
+		if ($prefix) {
+			$output = str_replace("\n", "\n$prefix", $output);
+		}
+
+		if ($init) {
+			$output = str_replace("***BREAK***", "\n", $output);
+		}
+
+		return $output;
+	}
+	
+	//Reads global settings for this plugin
+	public function readGlobalSettings(){
+		$path=$this->getPluginDirectory();
+		if (!$path)
+			return array();
+		$name=$path.DIRECTORY_SEPARATOR."config.json";
+		if (!file_exists($name))
+			return array();
+		$data=@file_get_contents($name);
+		if ($data===false)
+			return array();
+		$data=@json_decode($data,true);
+		if (!$data)
+			return array();
+		return $data;
+	}
+	
+	//Saves global settings for this plugin
+	public function saveGlobalSettings($settings){
+		if (!is_array($settings))
+			return false;
+		$path=$this->getPluginDirectory();
+		if (!$path)
+			return false;
+		$name=$path.DIRECTORY_SEPARATOR."config.json";
+		$data=@json_encode($settings);
+		if (!$data)
+			return false;
+		return (@file_put_contents($name,$data)!==false);
+	}
+	
+	//Adds a string to the list of debug strings with "info" debug level
+	public function addInfoString($s){
+		array_push($this->debug_info,$s);
+	}
+	
+	//Adds a string to the list of debug strings with "warning" debug level
+	public function addWarningString($s){
+		array_push($this->debug_warning,$s);
+	}
+	
+	//Adds a string to the list of debug strings with "error" debug level
+	public function addErrorString($s){
+		array_push($this->debug_error,$s);
+	}
+	
+	public function printDebugStrings(){
+		$this->printJSDebugText($this->debug_info,1);
+		$this->printJSDebugText($this->debug_warning,2);
+		$this->printJSDebugText($this->debug_error,3);
+	}
+	
+	/*
+	Prints debug info string for JS console output
+	$typeid defines the log warning level
+	*/
+	private function printJSDebugString($s, $typeid=1){
+		$prefix='['.$this->plugin_info['name'].' #'.$this->id.'] ';
+		$s=addslashes($s);
+		$s=preg_replace("/\r\n|\r|\n/", "\\n",$s);
+		switch($typeid){
+			case 1:
+				echo "console.info('".$prefix.$s."');";
+				break;
+			case 2:
+				echo "console.warn('".$prefix.$s."');";
+				break;
+			case 3:
+				echo "console.error('".$prefix.$s."');";
+				break;
+			default:
+				echo "console.log('".$prefix.$s."');";
+				break;
+		}
+	}
+
+	/*
+	Prints debug info strings (array) for JS console output
+	$typeid defines the log warning level
+	*/
+	private function printJSDebugText($arrayStrings, $typeid=1){
+		foreach ($arrayStrings as $s){
+			$this->printJSDebugString($s,$typeid);
+		}
+	}
 }
 
 }

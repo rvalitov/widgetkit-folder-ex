@@ -156,9 +156,7 @@ return array(
 
         'init.admin' => function($event, $app) {
 			//Adding our own translation files
-			$app->extend('translator', function ($translator, $app) {
-				return $translator->addResource('plugins/content/folder_ex/languages/'.$app['locale'].'.json');
-			}); 
+			$app['translator']->addResource('plugins/content/folder_ex/languages/'.$app['locale'].'.json');
             $app['angular']->addTemplate('folder_ex.edit', 'plugins/content/folder_ex/views/edit.php');
             $app['scripts']->add('folder_ex-controller', 'plugins/content/folder_ex/assets/controller.js');
 			//Adding tooltip:
@@ -171,7 +169,7 @@ return array(
 			//jQuery form validator http://www.formvalidator.net/:
 			$app['scripts']->add('jquery-form-validator', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.20/jquery.form-validator.min.js', array('uikit'));
 			//Generating dynamic update script:
-			$plugin=new WidgetkitExPlugin();
+			$plugin=new WidgetkitExPlugin($app);
 			$app['scripts']->add('folder_ex.dynamic-updater', $plugin->generateUpdaterJS($app), array(), 'string');
         }
 
