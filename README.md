@@ -34,6 +34,7 @@ The new features that the FolderEx has and that are not available in the origina
 * **Multilingual support**, translated into languages:
 	* English (en_GB)
 	* Русский (ru_RU)
+	* Deutsch (de_DE)
 
 # Supported platforms
 * The latest code is based on Widgetkit 2.7.3, however it should work with any Widgetkit 2.4.x and later (recommended 2.5.0+).
@@ -53,6 +54,7 @@ The manual is available in the [Wiki area](https://github.com/rvalitov/widgetkit
 * This plugin is created by [Ramil Valitov](http://www.valitov.me).
 * The code is based on the original Folder Content Provider by [Yootheme](http://yootheme.com/).
 * Icon designed by [iSuite Revoked](http://prax-08.deviantart.com/) is used in logo.
+* Thanks to [Marco Rensch](https://github.com/marcorensch) for making translation to German language.
 
 ## Disclaimer
 This project is NOT affiliated with, endorsed, or sponsored by the Yootheme. Widgetkit, its name, trademark, and other aspects of the app are trademarked and owned by their respective owners.
