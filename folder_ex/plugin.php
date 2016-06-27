@@ -16,9 +16,9 @@ return array(
 
     'main' => 'YOOtheme\\Widgetkit\\Content\\Type',
 	
-	'plugin_version' => 'v1.2.1',
+	'plugin_version' => 'v1.2.2',
 	
-	'plugin_date' => '18/06/2016',
+	'plugin_date' => '27/06/2016',
 	
 	'plugin_logo' => 'https://raw.githubusercontent.com/wiki/rvalitov/widgetkit-folder-ex/images/logo.jpg',
 
