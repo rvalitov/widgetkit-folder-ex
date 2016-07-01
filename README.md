@@ -32,10 +32,11 @@ The new features that the FolderEx has and that are not available in the origina
 * **Non Latin characters in file names** - you can name the files as you want in your native language, using non Latin characters, e.g. accents or Cyrillic characters. For example: `équipe.jpg`, `Животное.jpg`, `Übergabe.jpg`.
 * **Tooltips for all options** - it's much easier to use the widget, because tooltips are available for all settings.
 * **Update notifications** - you will be notified if new versions of the plugin are available.
-* **Multilingual support**, translated into languages:
-	* English (en_GB)
-	* Русский (ru_RU)
-	* Deutsch (de_DE)
+* **Multilingual interface**, translated into languages:
+	* **English** (en_GB)
+	* **Русский** (ru_RU)
+	* **Deutsch** (de_DE)
+	* Your language not listed? You can help with translation, [read more](https://github.com/rvalitov/widgetkit-folder-ex/wiki/Translation-issues). 
 
 # Supported platforms
 * The latest code is based on Widgetkit 2.7.3, however it should work with any Widgetkit 2.4.x and later (recommended 2.5.0+).
