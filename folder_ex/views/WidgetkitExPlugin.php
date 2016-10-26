@@ -26,6 +26,7 @@ class WidgetkitExPlugin{
 	const stablePHPVersion='5.6';
 	const minWKVersion='2.5.0';
 	const stableWKVersion='2.6.0';
+	const minUIkitVersion='2.20.0';
 
 	//Unique id of the plugin, usually this id is used as HTML id
 	private $id;
@@ -39,29 +40,36 @@ class WidgetkitExPlugin{
 	private $isJoomla;
 	
 	//Version of CMS
+	private $CMSVersion;
+	
 	private $CMS;
 	
 	public function __construct($appWK,$id=0){
-		$this->plugin_info=$this->getWKPluginInfo($appWK);
-		
 		$this->id=$id;
 		
 		$this->isJoomla=WidgetkitExPlugin::IsJoomlaInstalled();
-		if ($this->isJoomla)
-			$this->CMS=WidgetkitExPlugin::getJoomlaVersion();
-		else
-			$this->CMS=WidgetkitExPlugin::getWPVersion();
 		
-		$wk_version=WidgetkitExPlugin::getWKVersion();
+		$this->plugin_info=$this->getWKPluginInfo($appWK);
+		
+		if ($this->isJoomla){
+			$this->CMSVersion=$this->getJoomlaVersion();
+			$this->CMS="Joomla";
+		}
+		else{
+			$this->CMSVersion=$this->getWPVersion();
+			$this->CMS="WordPress";
+		}
+		
+		$wk_version=$this->getWKVersion();
 		$php_version=@phpversion();
-		array_push($this->debug_info,'Processing widget '.$this->plugin_info['name'].' (version '.$this->plugin_info['version'].') on '.$CMS.' with Widgetkit '.$wk_version.' and PHP '.$php_version.'('.@php_sapi_name().')');
-		if (version_compare($this->minPHPVersion,$php_version)>0)
+		array_push($this->debug_info,'Processing widget '.$this->plugin_info['name'].' (version '.$this->plugin_info['version'].') on '.$this->CMS.' '.$this->CMSVersion.' with Widgetkit '.$wk_version.' and PHP '.$php_version.'('.@php_sapi_name().')');
+		if (version_compare(WidgetkitExPlugin::minPHPVersion,$php_version)>0)
 			array_push($this->debug_error,'Your PHP is too old! Upgrade is strongly required! This widget may not work with your version of PHP.');
 		else
-			if (version_compare($this->stablePHPVersion,$php_version)>0)
+			if (version_compare(WidgetkitExPlugin::stablePHPVersion,$php_version)>0)
 				array_push($this->debug_warning,'Your PHP is quite old. Although this widget can work with your version of PHP, upgrade is recommended to the latest stable version of PHP.');
 			
-		if (version_compare($this->minWKVersion,$wk_version)>0)
+		if (version_compare(WidgetkitExPlugin::minWKVersion,$wk_version)>0)
 			array_push($this->debug_warning,"Your Widgetkit version is quite old. Although this widget may work with your version of Widgetkit, upgrade is recommended to the latest stable version of Widgetkit. Besides, you may experience some issues of missing options in the settings of this widget if you don't upgrade.");
 
 		array_push($this->debug_info,'Host: '.@php_uname());
@@ -87,18 +95,30 @@ class WidgetkitExPlugin{
 	//If $firstName=true, then returns first name of the current user or empty string if the first name is unkown
 	//If $firstName=false, then returns second name of the current user or empty string if the second name is unkown
 	//$widgetkit_user - is parameter that must be set to $app['user'] upon call.
-	private static function extractWKUserName($widgetkit_user,$firstName=true){
-		$name=trim($widgetkit_user->getName());
-		//There is a bug in Widgetkit - it doesn't get the name of the user
-		if (!$name){
-			//For Joomla:
-			if (WidgetkitExPlugin::IsJoomlaInstalled()) {
-				$user=\JFactory::getUser($widgetkit_user->getId());
-				if ($user)
-					$name=$user->name;
-			}
-			//TODO: add equivalent approach for WP
+	private function extractWKUserName($widgetkit_user,$firstName=true){
+		//$name=trim($widgetkit_user->getName());
+		//There is a bug in Widgetkit - it doesn't get the name of the user, so the code above is obsolete
+		if (!$this->isCMSJoomla()) {
+			//For Wordpress:
+			$current_user = wp_get_current_user();
+			if (!$current_user)
+				return "";
+			if ($firstName)
+				if ($current_user->user_firstname)
+					return $current_user->user_firstname;
+				else
+					return $current_user->user_login;
+			else
+				return $current_user->user_lastname;
 		}
+		//For Joomla:
+		$name;
+		$user=\JFactory::getUser($widgetkit_user->getId());
+		if ($user)
+			$name=$user->name;
+		else
+			return "";
+
 		$split_name=explode(' ',$name);
 		if ($firstName)
 			 return ((sizeof($split_name)>0)?$split_name[0]:$name);
@@ -111,8 +131,17 @@ class WidgetkitExPlugin{
 		return $this->isJoomla;
 	}
 	
+	public function isCMSWordPress(){
+		return !$this->isJoomla;
+	}
+	
 	//Returns CMS version
 	public function getCMSVersion(){
+		return $this->CMSVersion;
+	}
+	
+	//Returns CMS name (Joomla or WordPress)
+	public function getCMSName(){
 		return $this->CMS;
 	}
 	
@@ -128,25 +157,20 @@ class WidgetkitExPlugin{
 	}
 
 	//Returns Joomla version or empty string if failed
-	public static function getJoomlaVersion(){
-		$f=@file_get_contents(__DIR__ .'/../../../../../../../libraries/cms/version/version.php',false,null,0,3400);
-		if (!$f)
+	public function getJoomlaVersion(){
+		if ($this->isCMSJoomla()){
+			$jversion = new \JVersion;
+			return $jversion->getShortVersion();
+		}
+		else
 			return "";
-
-		if (preg_match_all("@.*public\s+\\\$RELEASE\s*=\s*'.+';@",$f,$matches))
-			$v.=explode("'",$matches[0][0],3)[1];
-		if (preg_match_all("@.*public\s+\\\$DEV_LEVEL\s*=\s*'.+';@",$f,$matches))
-			$v.='.'.explode("'",$matches[0][0],3)[1];
-		if (preg_match_all("@.*public\s+\\\$DEV_STATUS\s*=\s*'.+';@",$f,$matches))
-			$v.=' '.explode("'",$matches[0][0],3)[1];
-		if (preg_match_all("@.*public\s+\\\$CODENAME\s*=\s*'.+';@",$f,$matches))
-			$v.=' '.explode("'",$matches[0][0],3)[1];
-		return trim($v);
 	}
 
 	//Returns WordPress version or empty string if failed
-	public static function getWPVersion(){
-		$f=@file_get_contents(__DIR__ .'/../../../../../../../wp-includes/version.php',false,null,0,1400);
+	public function getWPVersion(){
+		if (!$this->isCMSWordPress())
+			return "";
+		$f=@file_get_contents($this->getRootDirectory().'/wp-includes/version.php',false,null,0,1400);
 		if (!$f)
 			return "";
 		
@@ -156,8 +180,8 @@ class WidgetkitExPlugin{
 	}
 
 	//Returns Widgetkit version or empty string if failed
-	public static function getWKVersion(){
-		$f=@file_get_contents(__DIR__ .'/../../../../config.php',false,null,0,1400);
+	public function getWKVersion(){
+		$f=@file_get_contents($this->getWKDirectory().'/config.php',false,null,0,1400);
 		if ( (!$f) || (!preg_match_all("@.*'version'\s+=>\s+'.+',@",$f,$matches)) )
 			return "";
 		return explode("'",$matches[0][0],5)[3];
@@ -193,15 +217,33 @@ class WidgetkitExPlugin{
 		return $this->plugin_info['url'];
 	}
 	
+	public function getWebsiteRootURL(){
+		return $this->plugin_info['root_url'];
+	}
+	
+	public function getWKDirectory(){
+		return $this->plugin_info['wk_path'];
+	}
+	
+	public function getRootDirectory(){
+		return $this->plugin_info['root'];
+	}
+	
 	//Returns array with info about current plugin (no matter if it's a widget or a content provider). It works only for custom plugins that are created with updater.js file.
 	//The array contains following fields:
-	//name - the name of the plugin or empty string if unknown.
-	//version - the version of the plugin or empty string if unknown.
-	//codename - the name of the distro (codename) or empty string if unknown.
-	//date - the release date of the plugin or empty string if unknown.
-	//logo - the absolute URL of the logo of the plugin or empty string if unknown.
-	//wiki - the absolute URL of wiki (manual) for the plugin or empty string if unknown.
-	//website - the absolute URL of website for the plugin or empty string if unknown.
+	//name 			- the name of the plugin or empty string if unknown.
+	//version 		- the version of the plugin or empty string if unknown.
+	//codename 		- the name of the distro (codename) or empty string if unknown.
+	//date 			- the release date of the plugin or empty string if unknown.
+	//logo 			- the absolute URL of the logo of the plugin or empty string if unknown.
+	//wiki 			- the absolute URL of wiki (manual) for the plugin or empty string if unknown.
+	//website		- the absolute URL of home website (homepage) for the plugin or empty string if unknown.
+	//root_url 		- the aboslute URL of the current website
+	//path			- directory on the server where the plugin is located
+	//relativepath	- relative path to the plugin from the Widgetkit directory
+	//wk_path		- directory on the server where the Widgetkit is installed
+	//root			- directory on the server where the website is located
+	//url			- absolute URL to the directory where the plugin is located
 	private function getWKPluginInfo($appWK){
 		$info=[
 			'name'=>'',
@@ -212,30 +254,54 @@ class WidgetkitExPlugin{
 			'logo'=>'',
 			'wiki'=>'',
 			'website'=>'',
+			'root_url'=>'',
 			'path'=>'',
 			'relativepath'=>'',
+			'wk_path'=>'',
+			'root'=>'',
 			'url'=>''
 		];
 		
 		//We perform a sequental scan of parent directories of the current script to find the plugin install directory
-		$needle=DIRECTORY_SEPARATOR."com_widgetkit".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."widgets".DIRECTORY_SEPARATOR;
+		$widgetkit_dir_name;
+		$baseurl;
+
+		if ($this->isCMSJoomla()){
+			$widgetkit_dir_name=DIRECTORY_SEPARATOR."administrator".DIRECTORY_SEPARATOR."components".DIRECTORY_SEPARATOR."com_widgetkit";
+			$baseurl=\JURI::base();
+		}
+		else{
+			$widgetkit_dir_name=DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."widgetkit";
+			$baseurl=get_site_url();
+		}
+		if ( ($baseurl) && ($baseurl[strlen($baseurl)-1]!='/') )
+			$baseurl.='/';
+		$info['root_url']=$baseurl;
+		
+		$needle=$widgetkit_dir_name.DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."widgets".DIRECTORY_SEPARATOR;
 		$pos=strrpos(__DIR__,$needle);
 		$this->isWidget=(boolean)$pos;
 		if (!$pos){
 			$this->isWidget=false;
-			$needle=DIRECTORY_SEPARATOR."com_widgetkit".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."content".DIRECTORY_SEPARATOR;
+			$needle=$widgetkit_dir_name.DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."content".DIRECTORY_SEPARATOR;
 			$pos=strrpos(__DIR__,$needle);
 			$this->isContentProvider=(boolean)$pos;
 		}
 		if ($pos){
+			$info['root']=substr(__DIR__,0,$pos);
 			$offset=$pos+strlen($needle);
 			$pos2=strpos(__DIR__,DIRECTORY_SEPARATOR,$offset);
 			if (!$pos2)
 				$info['path']=__DIR__;
 			else
 				$info['path']=substr(__DIR__,0,$pos2);
-			$needle=DIRECTORY_SEPARATOR."com_widgetkit".DIRECTORY_SEPARATOR;
-			$info['relativepath']=substr(__DIR__,$pos+strlen($needle),$pos2-($pos+strlen($needle)));
+			
+			$pos=strrpos($info['path'],$widgetkit_dir_name);
+			if ($pos)
+				$info['relativepath']=substr($info['path'],$pos+strlen($widgetkit_dir_name));
+		}
+		if ($info['root']){
+			$info['wk_path']=$info['root'].$widgetkit_dir_name;
 		}
 		
 		if ($info['path']){
@@ -265,8 +331,13 @@ class WidgetkitExPlugin{
 				}
 			}
 			$url=$appWK['url']->to('widgetkit');
-			if ($url)
-				$info['url']=$url.'/'.$info['relativepath'];
+			if ($url){
+				if ($url[strlen($url)-1]!='/')
+					$info['url']=$url;
+				else
+					$info['url']=substr($url,0,strlen($url)-1);
+				$info['url'].=$info['relativepath'];
+			}
 		}
 		return $info;
 	}
@@ -278,18 +349,18 @@ class WidgetkitExPlugin{
 		$versionDB=htmlspecialchars((isset($appWK['db_version']))?$appWK['db_version']:'Unknown');
 		$php_version=htmlspecialchars(@phpversion());
 		$phpinfo;
-		if (version_compare($this->minPHPVersion,$php_version)>0)
+		if (version_compare(WidgetkitExPlugin::minPHPVersion,$php_version)>0)
 			$phpinfo='<span  data-uk-tooltip class="uk-text-danger" style="margin-top: 5px;" title="{{ \'Your PHP is too old! Upgrade is strongly recommended! This plugin may not work with your version of PHP.\' |trans}}"><i class="uk-icon-warning  uk-margin-small-right"></i>'.$php_version.'</span>';
 		else
-		if (version_compare($this->stablePHPVersion,$php_version)>0)
+		if (version_compare(WidgetkitExPlugin::stablePHPVersion,$php_version)>0)
 			$phpinfo='<span  data-uk-tooltip class="uk-text-warning" style="margin-top: 5px;" title="{{ \'Your PHP is quite old. Although this plugin can work with your version of PHP, upgrade is recommended to the latest stable version of PHP.\' |trans}}"><i class="uk-icon-warning  uk-margin-small-right"></i>'.$php_version.'</span>';
 		else
 			$phpinfo='<span  data-uk-tooltip class="uk-text-success" style="margin-top: 5px;" title="{{ \'Your PHP version is OK.\' |trans}}"><i class="uk-icon-check uk-margin-small-right"></i>'.$php_version.' ('.@php_sapi_name().')</span>';
 
 		$wkinfo;
-		if (version_compare($this->minWKVersion,$versionWK)>0)
+		if (version_compare(WidgetkitExPlugin::minWKVersion,$versionWK)>0)
 			$wkinfo='<span  data-uk-tooltip class="uk-text-danger" style="margin-top: 5px;" title="{{ \'Your Widgetkit version is too old. Upgrade is strongly recommended. Although this plugin may work with your version of Widgetkit, upgrade is recommended to the latest stable version of Widgetkit.\' |trans}}"><i class="uk-icon-warning uk-margin-small-right"></i>'.$versionWK.'</span>';
-		if (version_compare($this->stableWKVersion,$versionWK)>0)
+		if (version_compare(WidgetkitExPlugin::stableWKVersion,$versionWK)>0)
 			$wkinfo='<span  data-uk-tooltip class="uk-text-warning" style="margin-top: 5px;" title="{{ \'Your Widgetkit version is quite old. Although this plugin may work with your version of Widgetkit, upgrade is recommended to the latest stable version of Widgetkit.\' |trans}}"><i class="uk-icon-warning uk-margin-small-right"></i>'.$versionWK.'</span>';
 		else
 			$wkinfo='<span  data-uk-tooltip class="uk-text-success" style="margin-top: 5px;" title="{{ \'Your Widgetkit version is OK.\' |trans}}"><i class="uk-icon-check uk-margin-small-right"></i>'.$versionWK.'</span>';
@@ -356,8 +427,9 @@ EOT;
 				<td>
 					{{ 'UIkit version' |trans}}
 				</td>
-				<td id="version-uikit-{$this->plugin_info['codename']}">
-					Unknown
+				<td>
+					<span id="version-uikit-valid-{$this->plugin_info['codename']}" data-uk-tooltip class="uk-text-success" style="margin-top: 5px;" title="{{ 'Your UIkit version is OK.' |trans}}"><i class="uk-icon-check uk-margin-small-right"></i><span class="version-uikit-{$this->plugin_info['codename']}">Unknown</span></span>
+					<span id="version-uikit-invalid-{$this->plugin_info['codename']}" data-uk-tooltip class="uk-text-danger" style="margin-top: 5px;" title="{{ 'Your UIkit version is too old, please upgrade your Widgetkit.' |trans}}"><i class="uk-icon-warning uk-margin-small-right"></i><span class="version-uikit-{$this->plugin_info['codename']}">Unknown</span></span>
 				</td>
 			</tr>
 			<tr>
@@ -424,10 +496,10 @@ EOT;
 	//Prints information for the "Newsletter" section of the plugin with subscribe button
 	//$appWK - is parameter that must be set to $app upon call.
 	public function printNewsletterInfo($appWK){
-		$firstName=htmlspecialchars(WidgetkitExPlugin::extractWKUserName($appWK['user']));
-		$lastName=htmlspecialchars(WidgetkitExPlugin::extractWKUserName($appWK['user'],false));
+		$firstName=htmlspecialchars($this->extractWKUserName($appWK['user']));
+		$lastName=htmlspecialchars($this->extractWKUserName($appWK['user'],false));
 		$email=htmlspecialchars($appWK['user']->getEmail());
-		$cms=htmlspecialchars((WidgetkitExPlugin::IsJoomlaInstalled())?'Joomla':'WordPress');
+		$cms=htmlspecialchars($this->getCMSName());
 		$origin=htmlspecialchars($appWK['request']->getBaseUrl());
 		$locale=htmlspecialchars($appWK['locale']);
 		
@@ -454,7 +526,7 @@ EOT;
 			<div class="uk-panel uk-panel-box uk-alert">
 			<i class="uk-icon uk-icon-info-circle uk-margin-small-right"></i>{{ 'Please, fill in all the fields below, then click Submit button' |trans}}
 			</div>
-			<form class="uk-form uk-form-horizontal" action="http://valitov.us11.list-manage.com/subscribe/post?u=13280b8048b58d2be207f1dd5&amp;id=52d79713c6" method="post" id="form-{$this->plugin_info['codename']}-subscribe" target="_blank">
+			<form class="uk-form uk-form-horizontal" action="https://valitov.us11.list-manage.com/subscribe/post?u=13280b8048b58d2be207f1dd5&amp;id=52d79713c6" method="post" id="form-{$this->plugin_info['codename']}-subscribe" target="_blank">
 				<fieldset data-uk-margin>
 					<legend>{{ 'Subscription form' |trans}}</legend>
 					<div class="uk-form-row">
@@ -604,9 +676,9 @@ EOT;
 		$modal=addcslashes($this->generateUpdateInfoDialog($appWK),"'");
 		
 		$configfile=$this->getPluginURL().'/config.json';
+		$minUIkitVersion=WidgetkitExPlugin::minUIkitVersion;
 		$js = <<< EOT
 jQuery(document).ready(function(\$){
-	
 	/* Display modal dialog with update info */
 	function showUpdateInfo(urlDownload,buildDate,buildVersion,releaseInfo){
 		var modaltext='{$modal}';
@@ -642,8 +714,14 @@ jQuery(document).ready(function(\$){
 		\$('#version-jquery-{$this->plugin_info['codename']}').append(\$.fn.jquery);
 		
 		if (UIkit && UIkit.version){
-			\$('#version-uikit-{$this->plugin_info['codename']}').empty();
-			\$('#version-uikit-{$this->plugin_info['codename']}').append(UIkit.version);
+			\$('.version-uikit-{$this->plugin_info['codename']}').empty();
+			\$('.version-uikit-{$this->plugin_info['codename']}').append(UIkit.version);
+			\$('#version-uikit-valid-{$this->plugin_info['codename']}').removeClass("uk-hidden");
+			\$('#version-uikit-invalid-{$this->plugin_info['codename']}').removeClass("uk-hidden");
+			if (versioncompare(UIkit.version,"{$minUIkitVersion}")<0)
+				\$('#version-uikit-valid-{$this->plugin_info['codename']}').addClass("uk-hidden");
+			else
+				\$('#version-uikit-invalid-{$this->plugin_info['codename']}').addClass("uk-hidden");
 		}
 		
 		if (angular && angular.version && angular.version.full){
@@ -902,6 +980,16 @@ EOT;
 		return $output;
 	}
 	
+	//Returns an array with items from $array that have keys listed in $list.
+	public static function intersectArrayItems($array,$list){
+		if (!is_array($list))
+			return '';
+		$s=array();
+		for ($i=0; $i<sizeof($list); $i++)
+			$s[$list[$i]]=(isset($array[$list[$i]])?($array[$list[$i]]):null);
+		return $s;
+	}
+	
 	//Reads global settings for this plugin
 	public function readGlobalSettings(){
 		$path=$this->getPluginDirectory();
@@ -949,9 +1037,54 @@ EOT;
 	}
 	
 	public function printDebugStrings(){
+echo <<< EOT
+if (typeof console.groupCollapsed === "function")
+	console.groupCollapsed('{$this->plugin_info['name']} #{$this->id}');
+else if (typeof console.group === "function")
+	console.group('{$this->plugin_info['name']} #{$this->id}');
+EOT;
 		$this->printJSDebugText($this->debug_info,1);
 		$this->printJSDebugText($this->debug_warning,2);
 		$this->printJSDebugText($this->debug_error,3);
+echo <<< EOT
+if (typeof console.groupEnd === "function")
+	console.groupEnd();
+EOT;
+	}
+	
+	/*
+	Returns true, if the data is suitable for output as a table. Used for debug, see the console.table command.
+	*/
+	public static function isDataForTable($array){
+		if ( (!is_array($array)) || (sizeof($array)<1) )
+			return false;
+		$count=-1;
+		foreach ($array as $value){
+			if (!is_array($value))
+				return false;
+			if ($count<0)
+				$count=sizeof($value);
+			else
+				if ($count!=sizeof($value))
+					return false;
+		}
+		return true;
+	}
+	
+	/*
+	Converts the contents of $value into JSON format that can be later parsed by the browser using Javascript
+	*/
+	public static function EncodeDataJson($value){
+		$result=json_encode($value,JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP);
+		if (!$result){
+			error_log("Failed to JSON encode data, error code ".json_last_error());
+			return '';
+		}
+		if (is_string($result)){
+			$result=addslashes($result);
+			$result=preg_replace("/\r\n|\r|\n/", "\\n",$result);
+		}
+		return $result;
 	}
 	
 	/*
@@ -959,23 +1092,70 @@ EOT;
 	$typeid defines the log warning level
 	*/
 	private function printJSDebugString($s, $typeid=1){
-		$prefix='['.$this->plugin_info['name'].' #'.$this->id.'] ';
-		$s=addslashes($s);
-		$s=preg_replace("/\r\n|\r|\n/", "\\n",$s);
+		//We don't use prefix anymore, because good browsers can collapse output in groups.
+		//$prefix='['.$this->plugin_info['name'].' #'.$this->id.'] ';
+		$prefix='';
+		$datatable=WidgetkitExPlugin::isDataForTable($s);
+		if ($datatable){
+		echo <<< EOT
+if (typeof console.table === "function"){
+	var data_list=[];
+EOT;
+		foreach ($s as $value){
+			echo "try { data_list.push(JSON.parse('".WidgetkitExPlugin::EncodeDataJson($value)."')); } catch(err) { console.error('Failed to parse JSON: '+err); ";
+			$this->printJSDebugString(WidgetkitExPlugin::features_var_export($value, 3));
+			echo "}";
+		}
+		echo <<< EOT
+	console.table(data_list);
+}
+else {
+EOT;
+		}
+		if (is_string($s)){
+			$s=addslashes($s);
+			$s=preg_replace("/\r\n|\r|\n/", "\\n",$s);
+		}
 		switch($typeid){
 			case 1:
-				echo "console.info('".$prefix.$s."');";
+				if (is_string($s))
+					echo "console.info('".$prefix.$s."');";
+				else{
+					echo "try {console.info(JSON.parse('".WidgetkitExPlugin::EncodeDataJson($s)."')); } catch (err) { console.error('Failed to parse JSON: '+err); ";
+					$this->printJSDebugString(WidgetkitExPlugin::features_var_export($s), 3);
+					echo "}";
+				}
 				break;
 			case 2:
-				echo "console.warn('".$prefix.$s."');";
+				if (is_string($s))
+					echo "console.warn('".$prefix.$s."');";
+				else{
+					echo "try {console.warn(JSON.parse('".WidgetkitExPlugin::EncodeDataJson($s)."')); } catch (err) { console.error('Failed to parse JSON: '+err); ";
+					$this->printJSDebugString(WidgetkitExPlugin::features_var_export($s), 3);
+					echo "}";
+				}
 				break;
 			case 3:
-				echo "console.error('".$prefix.$s."');";
+				if (is_string($s))
+					echo "console.error('".$prefix.$s."');";
+				else{
+					echo "try {console.error(JSON.parse('".WidgetkitExPlugin::EncodeDataJson($s)."')); } catch (err) { console.error('Failed to parse JSON: '+err); ";
+					$this->printJSDebugString(WidgetkitExPlugin::features_var_export($s), 3);
+					echo "}";
+				}
 				break;
 			default:
-				echo "console.log('".$prefix.$s."');";
+				if (is_string($s))
+					echo "console.log('".$prefix.$s."');";
+				else{
+					echo "try {console.log(JSON.parse('".WidgetkitExPlugin::EncodeDataJson($s)."')); } catch (err) { console.error('Failed to parse JSON: '+err); ";
+					$this->printJSDebugString(WidgetkitExPlugin::features_var_export($s), 3);
+					echo "}";
+				}
 				break;
 		}
+		if ($datatable)
+			echo '}';
 	}
 
 	/*
