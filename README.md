@@ -1,6 +1,8 @@
-![Version](https://img.shields.io/badge/Release-v1.2.3-green.svg?style=flat) ![Widgetkit](https://img.shields.io/badge/Widgetkit-v2.4.x+-green.svg?style=flat) ![Joomla](https://img.shields.io/badge/Joomla!-v3.4.x+-yellow.svg?style=flat) ![Wordpress](https://img.shields.io/badge/Wordpress-v4.4.x+-yellow.svg?style=flat) ![PHP7](https://img.shields.io/badge/PHP7-compatible-blue.svg?style=flat)
+![Version](https://img.shields.io/badge/Release-v1.2.4-green.svg?style=flat) ![Widgetkit](https://img.shields.io/badge/Widgetkit-v2.4.x+-green.svg?style=flat) ![Joomla](https://img.shields.io/badge/Joomla!-v3.4.x+-yellow.svg?style=flat) ![Wordpress](https://img.shields.io/badge/Wordpress-v4.4.x+-yellow.svg?style=flat) ![PHP7](https://img.shields.io/badge/PHP7-compatible-blue.svg?style=flat) ![YoothemePro](https://img.shields.io/badge/YoothemePro-compatible-blue.svg?style=flat)
 
 ![FolderEx Widgetkit Content Provider logo](https://raw.githubusercontent.com/wiki/rvalitov/widgetkit-folder-ex/images/logo.jpg)
+
+**Attention! This is a content plugin, not a widget! Follow the installation instructions carefully.**
 
 # Overview
 **FolderEx** is a Content Provider plugin for [Yootheme Widgetkit2](https://yootheme.com/widgetkit). It's a superior version of a standard Folder Content Provider that allows to use files as items for a widget. After installation it becomes available for any standard or custom widgets. Especially the FolderEx is optimal for use with image related widgets, for example:
@@ -39,7 +41,7 @@ The new features that the FolderEx has and that are not available in the origina
 	* Your language not listed? You can help with translation, [read more](https://github.com/rvalitov/widgetkit-folder-ex/wiki/Translation-issues). 
 
 # Supported platforms
-* The latest code is based on Widgetkit 2.7.3, however it should work with any Widgetkit 2.4.x and later (recommended 2.5.0+). Tested in Widgetkit 2.7.x, 2.8.x.
+* The initial code is based on Widgetkit 2.7.3 and was updated if necessary. It should work with any Widgetkit 2.4.x and later (recommended 2.5.0+). Tested in Widgetkit 2.7.x, 2.8.x, 2.9.x.
 * The following CMS are supported:
 	* Joomla 3.4.x or later. Tested in Joomla 3.4.x, 3.5.x, 3.6.x.
 	* Wordpress 4.4.x or later
