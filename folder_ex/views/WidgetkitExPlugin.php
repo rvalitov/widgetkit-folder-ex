@@ -904,7 +904,7 @@ EOT;
 	<div>
 		<div class="uk-panel uk-panel-box uk-text-center uk-margin-bottom">
 			<p class="uk-panel-title">{{ 'Euro' |trans}} <i class="uk-icon uk-icon-euro"></i></p>
-			<p>Payment methods:</p>
+			<p>{{ 'Payment methods:' |trans}}</p>
 			<ul style="list-style-type: none;">
 				<li><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BJJF3E6DBRYHA" target="_blank"><i class="uk-icon uk-icon-credit-card"></i> {{ 'Bank card' |trans}}</a></li>
 				<li><a href="https://www.paypal.me/valitov/0eur" target="_blank"><i class="uk-icon uk-icon-paypal"></i> {{ 'PayPal' |trans}}</a></li>
@@ -914,7 +914,7 @@ EOT;
 	<div>
 		<div class="uk-panel uk-panel-box uk-text-center uk-margin-bottom">
 			<p class="uk-panel-title">{{ 'USD' |trans}} <i class="uk-icon uk-icon-usd"></i></p>
-			<p>Payment methods:</p>
+			<p>{{ 'Payment methods:' |trans}}</p>
 			<ul style="list-style-type: none;">
 				<li><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=B8VMNU7SEAU8J" target="_blank"><i class="uk-icon uk-icon-credit-card"></i> {{ 'Bank card' |trans}}</a></li>
 				<li><a href="https://www.paypal.me/valitov/0usd" target="_blank"><i class="uk-icon uk-icon-paypal"></i> {{ 'PayPal' |trans}}</a></li>
@@ -924,7 +924,7 @@ EOT;
 	<div>
 		<div class="uk-panel uk-panel-box uk-text-center uk-margin-bottom">
 			<p class="uk-panel-title">{{ 'Russian ruble' |trans}} <i class="uk-icon uk-icon-rouble"></i></p>
-			<p>Payment methods:</p>
+			<p>{{ 'Payment methods:' |trans}}</p>
 			<ul style="list-style-type: none;">
 				<li><a href="https://money.yandex.ru/to/410011424143476" target="_blank"><i class="uk-icon uk-icon-credit-card"></i> {{ 'Bank card' |trans}}</a></li>
 				<li><a href="https://www.paypal.me/valitov/0rub" target="_blank"><i class="uk-icon uk-icon-paypal"></i> {{ 'PayPal' |trans}}</a></li>
@@ -935,7 +935,7 @@ EOT;
 	<div>
 		<div class="uk-panel uk-panel-box uk-text-center uk-margin-bottom">
 			<p class="uk-panel-title">{{ 'Other currencies' |trans}}</p>
-			<p>Payment methods:</p>
+			<p>{{ 'Payment methods:' |trans}}</p>
 			<ul style="list-style-type: none;">
 				<li><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BJJF3E6DBRYHA" target="_blank"><i class="uk-icon uk-icon-credit-card"></i> {{ 'Bank card' |trans}}</a></li>
 				<li><a href="https://www.paypal.me/valitov" target="_blank"><i class="uk-icon uk-icon-paypal"></i> {{ 'PayPal' |trans}}</a></li>
