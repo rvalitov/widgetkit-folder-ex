@@ -155,25 +155,27 @@ return array(
     'events' => array(
 
         'init.admin' => function($event, $app) {
+			$plugin=new WidgetkitExPlugin($app);
+			$uikit=(WidgetkitExPlugin::getCSSPrefix($app)=='uk') ? 'uikit' : 'uikit2';
+			//Shared styles for the Ex widgets
+			$app['styles']->add('widget-ex', 'plugins/widgets/map_ex/css/widgetex.css', array('widgetkit-application'));
 			//Adding our own translation files
 			$app['translator']->addResource('plugins/content/folder_ex/languages/'.$app['locale'].'.json');
             $app['angular']->addTemplate('folder_ex.edit', 'plugins/content/folder_ex/views/edit.php');
             $app['scripts']->add('folder_ex-controller', 'plugins/content/folder_ex/assets/controller.js');
 			//Adding tooltip:
-			$app['scripts']->add('uikit-tooltip', 'vendor/assets/uikit/js/components/tooltip.min.js', array('uikit'));
-			$app['styles']->add('uikit-tooltip', 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.26.3/css/components/tooltip.min.css', array('uikit'));
+			$app['scripts']->add($uikit.'-tooltip', 'vendor/assets/uikit/js/components/tooltip.min.js', array($uikit));
+			$app['styles']->add($uikit.'-tooltip', 'https://cdnjs.cloudflare.com/ajax/libs/uikit/'.$plugin->getUIkitVersion().'/css/components/tooltip.min.css', array($uikit));
 			//jQuery wait plugin:
-			$app['scripts']->add('jquery.wait', 'plugins/content/folder_ex/assets/jquery.wait.min.js', array('uikit'));
+			$app['scripts']->add('jquery.wait', 'plugins/content/folder_ex/assets/jquery.wait.min.js', array($uikit));
 			//Marked:
-			$app['scripts']->add('marked', 'plugins/content/folder_ex/assets/marked.min.js', array('uikit'));
+			$app['scripts']->add('marked', 'plugins/content/folder_ex/assets/marked.min.js', array($uikit));
 			//Mailchimp for subscription:
-			$app['scripts']->add('mailchimp', 'plugins/content/folder_ex/assets/jquery.formchimp.min.js', array('uikit'));
-			//jQuery form validator http://www.formvalidator.net/:
-			$app['scripts']->add('jquery-form-validator', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.20/jquery.form-validator.min.js', array('uikit'));
+			$app['scripts']->add('mailchimp', 'plugins/content/folder_ex/assets/jquery.formchimp.min.js', array($uikit));
 			//Underscore.js
-			$app['scripts']->add('underscore', 'plugins/content/folder_ex/assets/underscore-min.js', array('uikit'));
+			$app['scripts']->add('underscore', 'plugins/content/folder_ex/assets/underscore-min.js', array($uikit));
 			//Semantic version compare
-			$app['scripts']->add('versioncompare', 'plugins/content/folder_ex/assets/versioncompare.js', array('uikit'));
+			$app['scripts']->add('versioncompare', 'plugins/content/folder_ex/assets/versioncompare.js', array($uikit));
 			//Generating dynamic update script:
 			$plugin=new WidgetkitExPlugin($app);
 			$app['scripts']->add('folder_ex.dynamic-updater', $plugin->generateUpdaterJS($app), array(), 'string');
