@@ -157,8 +157,9 @@ return array(
         'init.admin' => function($event, $app) {
 			$plugin=new WidgetkitExPlugin($app);
 			$uikit=(WidgetkitExPlugin::getCSSPrefix($app)=='uk') ? 'uikit' : 'uikit2';
-			//Shared styles for the Ex widgets
-			$app['styles']->add('widget-ex', 'plugins/widgets/map_ex/css/widgetex.css', array('widgetkit-application'));
+			//Backend CSS
+			$app['styles']->add('folder_ex_edit', 'plugins/content/folder_ex/css/folderex.edit.css', array('widgetkit-application'));
+			
 			//Adding our own translation files
 			$app['translator']->addResource('plugins/content/folder_ex/languages/'.$app['locale'].'.json');
             $app['angular']->addTemplate('folder_ex.edit', 'plugins/content/folder_ex/views/edit.php');
