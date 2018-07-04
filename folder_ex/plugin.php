@@ -32,6 +32,7 @@ return array(
         'data' => array(
             'folder' => defined('WPINC') ? 'wp-content/uploads/' : 'images/', // J or WP?
             'sort_by' => 'filename_asc',
+            'offset' => 0,
             'regexp' => '',
             'replace_dashes' => true,
             'replace_underscores' => true,
@@ -50,6 +51,7 @@ return array(
         $hash = function ($content) {
             $fields = array($content['folder'],
                 $content['sort_by'],
+                $content['offset'],
                 $content['regexp'],
                 $content['strip_leading_numbers'],
                 $content['replace_dashes'],
@@ -143,8 +145,10 @@ return array(
             shuffle($newitems);
         }
 
-        if (is_numeric($content['max_images'])) {
-            $newitems = array_slice($newitems, 0, $content['max_images']);
+        if (is_numeric($content['max_images']) || is_numeric($content['offset'])) {
+            $offset = is_numeric($content['offset']) ? $content['offset'] : 0;
+            $max_images = is_numeric($content['max_images']) ? $content['max_images'] : null;
+            $newitems = array_slice($newitems, $offset, $max_images);
         }
 
         foreach ($newitems as $data) {

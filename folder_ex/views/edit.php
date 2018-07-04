@@ -63,6 +63,13 @@ $plugin=new WidgetkitExPlugin($app);
 		</div>
 	</div>
 
+    <div class="uk-form-row">
+        <span class="uk-form-label" for="wk-offset">{{'Offset' | trans}}<span data-uk-tooltip="'cls':'uk-folderex-tooltip'" title="{{ 'Offset defines how many images should be skipped from the start. If this option is empty or zero, then no offset is applied.' |trans}}"><i></i></span></span>
+        <div class="uk-form-controls">
+            <input id="wk-offset" class="uk-form-width-large" type="text" ng-model="content.data['offset']" placeholder="{{ 'Leave empty to load all images' | trans }}" >
+        </div>
+    </div>
+
 	<div class="uk-form-row">
 		<span class="uk-form-label" for="wk-max-images">{{'Max Images' | trans}}<span data-uk-tooltip="'cls':'uk-folderex-tooltip'" title="{{ 'This option allows to limit the number of images to load. If this option is empty, then no restriction to the number of images is applied.' |trans}}"><i></i></span></span>
 		<div class="uk-form-controls">
