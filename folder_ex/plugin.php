@@ -7,7 +7,8 @@ Web: http://www.valitov.me/
 Git: https://github.com/rvalitov/widgetkit-folder-ex
 */
 
-require_once(__DIR__.'/views/WidgetkitExPlugin.php');
+require_once(__DIR__ . '/views/WidgetkitExPlugin.php');
+
 use WidgetkitEx\FolderEx\WidgetkitExPlugin;
 
 return array(
@@ -15,44 +16,44 @@ return array(
     'name' => 'content/folder_ex',
 
     'main' => 'YOOtheme\\Widgetkit\\Content\\Type',
-	
-	'plugin_version' => 'v1.2.6',
-	
-	'plugin_date' => '14/03/2017',
-	
-	'plugin_logo' => 'https://raw.githubusercontent.com/wiki/rvalitov/widgetkit-folder-ex/images/logo.jpg',
+
+    'plugin_version' => 'v1.2.6',
+
+    'plugin_date' => '14/03/2017',
+
+    'plugin_logo' => 'https://raw.githubusercontent.com/wiki/rvalitov/widgetkit-folder-ex/images/logo.jpg',
 
     'config' => array(
 
-        'name'  => 'folder_ex',
+        'name' => 'folder_ex',
         'label' => 'FolderEx',
-        'icon'  => 'assets/images/content-placeholder.svg',
-        'item'  => array('title', 'content', 'media', 'link'),
-        'data'  => array(
+        'icon' => 'assets/images/content-placeholder.svg',
+        'item' => array('title', 'content', 'media', 'link'),
+        'data' => array(
             'folder' => defined('WPINC') ? 'wp-content/uploads/' : 'images/', // J or WP?
             'sort_by' => 'filename_asc',
-			'regexp' => '',
-			'replace_dashes' => true,
-			'replace_underscores' => true,
+            'regexp' => '',
+            'replace_dashes' => true,
+            'replace_underscores' => true,
             'strip_leading_numbers' => false,
             'strip_trailing_numbers' => false
         )
     ),
 
-    'items' => function($items, $content, $app) {
+    'items' => function ($items, $content, $app) {
 
         $extensions = array('jpg', 'jpeg', 'gif', 'png');
 
         // caching
-        $now       = time();
-        $expires   = 5 * 60;
-        $hash      = function($content) {
+        $now = time();
+        $expires = 5 * 60;
+        $hash = function ($content) {
             $fields = array($content['folder'],
                 $content['sort_by'],
-				$content['regexp'],
-				$content['strip_leading_numbers'],
-				$content['replace_dashes'],
-				$content['replace_underscores'],
+                $content['regexp'],
+                $content['strip_leading_numbers'],
+                $content['replace_dashes'],
+                $content['replace_underscores'],
                 $content['strip_trailing_numbers']);
             return md5(serialize($fields));
         };
@@ -60,25 +61,25 @@ return array(
         $newitems = array();
 
         // cache invalid?
-        if(array_key_exists('hash', $content) // never cached
+        if (array_key_exists('hash', $content) // never cached
             || $now - $content['hashed'] > $expires // cached values too old
             || $hash($content) != $content['hash']) { // content settings have changed
 
             $folder = trim($content['folder'], DIRECTORY_SEPARATOR);
-			$r=trim($content['regexp']);
-			if ($r)
-				$pttrn=$r;
-			else
-				$pttrn  = '/\.('.implode('|', $extensions).')$/i';
-            $dir    = dirname(dirname(dirname( $app['path'] ))); // TODO: cleaner? system agnostic?
-            $sort   = explode('_', $content['sort_by'] ?: 'filename_asc');
+            $r = trim($content['regexp']);
+            if ($r)
+                $pttrn = $r;
+            else
+                $pttrn = '/\.(' . implode('|', $extensions) . ')$/i';
+            $dir = dirname(dirname(dirname($app['path']))); // TODO: cleaner? system agnostic?
+            $sort = explode('_', $content['sort_by'] ?: 'filename_asc');
 
-            if (!$files = glob($dir.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.'*')) {
+            if (!$files = glob($dir . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . '*')) {
                 return;
             }
 
-            if($sort[0] == 'date') {
-                usort($files, function($a, $b) {
+            if ($sort[0] == 'date') {
+                usort($files, function ($a, $b) {
                     return filemtime($a) > filemtime($b);
                 });
             }
@@ -97,38 +98,38 @@ return array(
                 $data = array();
 
                 $data['title'] = WidgetkitExPlugin::mb_basename($img);
-                $data['media'] = implode(DIRECTORY_SEPARATOR, array_map("rawurlencode", explode(DIRECTORY_SEPARATOR, $folder.DIRECTORY_SEPARATOR.WidgetkitExPlugin::mb_basename($img))));
+                $data['media'] = implode(DIRECTORY_SEPARATOR, array_map("rawurlencode", explode(DIRECTORY_SEPARATOR, $folder . DIRECTORY_SEPARATOR . WidgetkitExPlugin::mb_basename($img))));
 
                 // remove extension
                 $data['title'] = preg_replace('/\.[^.]+$/', '', $data['title']);
 
                 // remove leading number
-                if($content['strip_leading_numbers']) {
+                if ($content['strip_leading_numbers']) {
                     $data['title'] = preg_replace('/^\d+\s?+/', '', $data['title']);
                 }
 
                 // remove trailing numbers
-                if($content['strip_trailing_numbers']) {
+                if ($content['strip_trailing_numbers']) {
                     $data['title'] = preg_replace('/\s?+\d+$/', '', $data['title']);
                 }
 
-				// replace underscores with space
-				if($content['replace_underscores']) {
-					$data['title'] = trim(str_replace('_', ' ', $data['title']));
-				}
-				
-				// replace dashes with space
-				if($content['replace_dashes']) {
-					$data['title'] = trim(str_replace('-', ' ', $data['title']));
-				}
+                // replace underscores with space
+                if ($content['replace_underscores']) {
+                    $data['title'] = trim(str_replace('_', ' ', $data['title']));
+                }
+
+                // replace dashes with space
+                if ($content['replace_dashes']) {
+                    $data['title'] = trim(str_replace('-', ' ', $data['title']));
+                }
 
                 $newitems[] = $data;
             }
 
             // write cache
             $content['prepared'] = json_encode($newitems);
-            $content['hash']     = $hash($content);
-            $content['hashed']   = $now;
+            $content['hash'] = $hash($content);
+            $content['hashed'] = $now;
             $app['content']->save($content->toArray());
 
         } else {
@@ -138,11 +139,11 @@ return array(
 
         }
 
-        if($content['sort_by'] == "random") {
+        if ($content['sort_by'] == "random") {
             shuffle($newitems);
         }
 
-        if(is_numeric($content['max_images'])){
+        if (is_numeric($content['max_images'])) {
             $newitems = array_slice($newitems, 0, $content['max_images']);
         }
 
@@ -154,32 +155,32 @@ return array(
 
     'events' => array(
 
-        'init.admin' => function($event, $app) {
-			$plugin=new WidgetkitExPlugin($app);
-			$uikit=(WidgetkitExPlugin::getCSSPrefix($app)=='uk') ? 'uikit' : 'uikit2';
-			//Backend CSS
-			$app['styles']->add('folder_ex_edit', 'plugins/content/folder_ex/css/folderex.edit.css', array('widgetkit-application'));
-			
-			//Adding our own translation files
-			$app['translator']->addResource('plugins/content/folder_ex/languages/'.$app['locale'].'.json');
+        'init.admin' => function ($event, $app) {
+            $plugin = new WidgetkitExPlugin($app);
+            $uikit = (WidgetkitExPlugin::getCSSPrefix($app) == 'uk') ? 'uikit' : 'uikit2';
+            //Backend CSS
+            $app['styles']->add('folder_ex_edit', 'plugins/content/folder_ex/css/folderex.edit.css', array('widgetkit-application'));
+
+            //Adding our own translation files
+            $app['translator']->addResource('plugins/content/folder_ex/languages/' . $app['locale'] . '.json');
             $app['angular']->addTemplate('folder_ex.edit', 'plugins/content/folder_ex/views/edit.php');
             $app['scripts']->add('folder_ex-controller', 'plugins/content/folder_ex/assets/controller.js');
-			//Adding tooltip:
-			$app['scripts']->add($uikit.'-tooltip', 'vendor/assets/uikit/js/components/tooltip.min.js', array($uikit));
-			$app['styles']->add($uikit.'-tooltip', 'https://cdnjs.cloudflare.com/ajax/libs/uikit/'.$plugin->getUIkitVersion().'/css/components/tooltip.min.css', array($uikit));
-			//jQuery wait plugin:
-			$app['scripts']->add('jquery.wait', 'plugins/content/folder_ex/assets/jquery.wait.min.js', array($uikit));
-			//Marked:
-			$app['scripts']->add('marked', 'plugins/content/folder_ex/assets/marked.min.js', array($uikit));
-			//Mailchimp for subscription:
-			$app['scripts']->add('mailchimp', 'plugins/content/folder_ex/assets/jquery.formchimp.min.js', array($uikit));
-			//Underscore.js
-			$app['scripts']->add('underscore', 'plugins/content/folder_ex/assets/underscore-min.js', array($uikit));
-			//Semantic version compare
-			$app['scripts']->add('versioncompare', 'plugins/content/folder_ex/assets/versioncompare.js', array($uikit));
-			//Generating dynamic update script:
-			$plugin=new WidgetkitExPlugin($app);
-			$app['scripts']->add('folder_ex.dynamic-updater', $plugin->generateUpdaterJS($app), array(), 'string');
+            //Adding tooltip:
+            $app['scripts']->add($uikit . '-tooltip', 'vendor/assets/uikit/js/components/tooltip.min.js', array($uikit));
+            $app['styles']->add($uikit . '-tooltip', 'https://cdnjs.cloudflare.com/ajax/libs/uikit/' . $plugin->getUIkitVersion() . '/css/components/tooltip.min.css', array($uikit));
+            //jQuery wait plugin:
+            $app['scripts']->add('jquery.wait', 'plugins/content/folder_ex/assets/jquery.wait.min.js', array($uikit));
+            //Marked:
+            $app['scripts']->add('marked', 'plugins/content/folder_ex/assets/marked.min.js', array($uikit));
+            //Mailchimp for subscription:
+            $app['scripts']->add('mailchimp', 'plugins/content/folder_ex/assets/jquery.formchimp.min.js', array($uikit));
+            //Underscore.js
+            $app['scripts']->add('underscore', 'plugins/content/folder_ex/assets/underscore-min.js', array($uikit));
+            //Semantic version compare
+            $app['scripts']->add('versioncompare', 'plugins/content/folder_ex/assets/versioncompare.js', array($uikit));
+            //Generating dynamic update script:
+            $plugin = new WidgetkitExPlugin($app);
+            $app['scripts']->add('folder_ex.dynamic-updater', $plugin->generateUpdaterJS($app), array(), 'string');
         }
 
     )
