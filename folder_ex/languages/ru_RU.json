@@ -48,6 +48,8 @@
 	"Newsletter": "Новостная рассылка",
 	"No": "Нет",
 	"No problems detected": "Проблем не обнаружено",
+	"Offset": "Смещение",
+	"Offset defines how many images should be skipped from the start. If this option is empty or zero, then no offset is applied.": "Смещение определяет количество изображений, которые будут пропущены от начала. Если указано пустое значение или ноль, то смещение не применяется.",
 	"Ok": "Ок",
 	"Order": "Порядок",
 	"Other currencies": "Другие валюты",
