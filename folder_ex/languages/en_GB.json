@@ -48,6 +48,8 @@
 	"Newsletter": "Newsletter",
 	"No": "No",
 	"No problems detected": "No problems detected",
+	"Offset": "Offset",
+	"Offset defines how many images should be skipped from the start. If this option is empty or zero, then no offset is applied.": "Offset defines how many images should be skipped from the start. If this option is empty or zero, then no offset is applied.",
 	"Ok": "Ok",
 	"Order": "Order",
 	"Other currencies": "Other currencies",
