@@ -1,8 +1,17 @@
-![Version](https://img.shields.io/badge/Release-v1.2.7-green.svg?style=flat) ![Widgetkit](https://img.shields.io/badge/Widgetkit-v2.4.x+-green.svg?style=flat) ![Joomla](https://img.shields.io/badge/Joomla!-v3.4.x+-yellow.svg?style=flat) ![Wordpress](https://img.shields.io/badge/Wordpress-v4.4.x+-yellow.svg?style=flat) ![PHP7](https://img.shields.io/badge/PHP7-compatible-blue.svg?style=flat) ![YoothemePro](https://img.shields.io/badge/YoothemePro-compatible-blue.svg?style=flat)
+![Version](https://img.shields.io/badge/Release-v1.2.7-green.svg?style=flat) ![Widgetkit](https://img.shields.io/badge/Widgetkit-v2.4.x+-green.svg?style=flat) ![Widgetkit 3](https://img.shields.io/badge/Widgetkit_3-not_supported-red.svg?style=flat) ![Joomla](https://img.shields.io/badge/Joomla!-v3.4.x+-yellow.svg?style=flat) ![Wordpress](https://img.shields.io/badge/Wordpress-v4.4.x+-yellow.svg?style=flat) ![PHP7](https://img.shields.io/badge/PHP7-compatible-blue.svg?style=flat) ![YoothemePro](https://img.shields.io/badge/YoothemePro-compatible-blue.svg?style=flat)
 
 ![FolderEx Widgetkit Content Provider logo](https://raw.githubusercontent.com/wiki/rvalitov/widgetkit-folder-ex/images/logo.jpg)
 
 **Attention! This is a content plugin, not a widget! Follow the installation instructions carefully.**
+
+__Notice about Widgetkit 3 and status of this project__: Yootheme [announced](https://yootheme.com/blog/2021/01/26/widgetkit-3.0-completely-rebuilt-with-uikit-3) a third version of Widgetkit on January 26th, 2021.
+I received reports that after upgrade to Widgetkit 3 my widgets do not work properly.
+I'm very sorry that I currently not able to devote my time to this project to develop it further.
+In its current state it's "bug free" and works with Widgetkit 2 and Joomla 3.
+Currently, I don't have plans to add support for Widgetkit 3 or add any other serious improvements.
+This project has been my pet project that I was doing in my free time, and I've been happy to share it for free with the community.
+As I stopped using Widgetkit in my own websites, I lost motivation in further updates to this project.
+I'm happy if my work and widgets were of any help or use in your websites!
 
 # Overview
 **FolderEx** is a Content Provider plugin for [Yootheme Widgetkit2](https://yootheme.com/widgetkit). It's a superior version of a standard Folder Content Provider that allows to use files as items for a widget. After installation it becomes available for any standard or custom widgets. Especially the FolderEx is optimal for use with image related widgets, for example:
